@@ -885,11 +885,15 @@ function siding4Markup(){
    var l=lamps(id,fn);
    var headLeft=left-10;
    var headW=126, headH=56;
-   var postLeft=headLeft+headW+16;
-   var postW=10, postH=22;
-   var postTop=top+headH;
-   return '<div style="position:absolute;left:'+postLeft+'px;top:'+postTop+'px;width:'+postW+'px;height:'+postH+'px;background:#111;z-index:9;"></div>'+
-     '<div style="position:absolute;left:'+(postLeft-14)+'px;top:'+(postTop+postH)+'px;width:38px;height:6px;background:#111;z-index:9;"></div>'+
+   var centerX=headLeft+headW/2;
+   var poleW=5;
+   var poleTop=top-22, poleBottom=top+headH+26;
+   var armTop=top+10, armLeft=headLeft+headW, armLen=46, armDrop=18;
+   return '<div style="position:absolute;left:'+(centerX-poleW/2)+'px;top:'+poleTop+'px;width:'+poleW+'px;height:'+(poleBottom-poleTop)+'px;background:#111;z-index:5;"></div>'+
+     '<div style="position:absolute;left:'+(centerX-12)+'px;top:'+poleBottom+'px;width:24px;height:5px;background:#111;z-index:5;"></div>'+
+     '<div style="position:absolute;left:'+armLeft+'px;top:'+armTop+'px;width:'+armLen+'px;height:3px;background:#111;z-index:9;"></div>'+
+     '<div style="position:absolute;left:'+armLeft+'px;top:'+(armTop+armDrop)+'px;width:'+(armLen-10)+'px;height:3px;background:#111;z-index:9;"></div>'+
+     '<div style="position:absolute;left:'+(armLeft+armLen-3)+'px;top:'+armTop+'px;width:3px;height:'+(armDrop+3)+'px;background:#111;z-index:9;"></div>'+
      signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
      '<div style="position:absolute;left:'+(headLeft-26)+'px;top:'+(top+headH/2-2)+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
