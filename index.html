@@ -109,6 +109,7 @@
   .sim-resetbtn{padding:10px 12px;border-radius:9px;border:1px solid #2a323d;background:#0f1318;color:#c4ccd5;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;}
   .sim-qta{flex:1;min-height:64px;background:#0f1318;border:1.5px solid #2a323d;border-radius:7px;color:#e6ebf2;font-size:13px;font-family:'Barlow',sans-serif;padding:8px 10px;resize:vertical;outline:none;}
   .sim-clearbtn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:#0f1318;border:1.5px solid #2a323d;color:#8b97a6;}
+  .mini-dmi-dock{width:254px;height:150px;z-index:30;}
   .mini-dmi{position:absolute;width:200px;height:150px;background:#0a1a31;border:1.5px solid #20344e;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.55);z-index:30;touch-action:none;}
   .mini-dmi-hd{position:absolute;top:0;left:0;right:0;background:#0d2040;border-bottom:1px solid #1a3050;padding:2px 7px;display:flex;align-items:center;justify-content:space-between;z-index:2;}
   .mini-arrowpad{position:absolute;z-index:31;}
@@ -960,18 +961,20 @@ function siding4Markup(){
 
 /* ---------- Mini DMI overlay ---------- */
 function miniDmiMarkup(){
- var posStyle=(sim.miniDmiX!==null)?("left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;"):"top:12px;right:12px;";
- var arrowStyle=(sim.miniDmiX!==null)?("left:"+(Math.round(sim.miniDmiX)+204)+"px;top:"+(Math.round(sim.miniDmiY)+54)+"px;"):"top:66px;right:10px;";
- return '<div class="mini-dmi" id="miniDmi" style="'+posStyle+'">'+
-   '<div class="mini-dmi-hd"><span style="font-size:9px;font-weight:700;color:#6fb0e6;letter-spacing:.8px;">&#10495; CABIN DMI</span>'+
-   '<span style="font-size:9px;font-weight:700;color:#a3c25f;font-family:\'Barlow Semi Condensed\',sans-serif;">L'+sim.dmiLevel+' &middot; '+sim.dmiMode.toUpperCase()+'</span></div>'+
-   dmiSpeedoSvg(380,340,200,133,17)+
- '</div>'+
- '<div class="mini-arrowpad" id="miniArrows" style="'+arrowStyle+'">'+
-   '<div class="sim-arrowgrid">'+
-     '<div></div><button id="miniUp">&#9650;</button><div></div>'+
-     '<button id="miniLeft">&#9664;</button><div class="dotcell"><div class="dot"></div></div><button id="miniRight">&#9654;</button>'+
-     '<div></div><button id="miniDown">&#9660;</button><div></div>'+
+ var docked=sim.miniDmiX===null;
+ var dockStyle=docked?"position:relative;margin:10px auto 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
+ return '<div class="mini-dmi-dock" id="miniDmiDock" style="'+dockStyle+'">'+
+   '<div class="mini-dmi" id="miniDmi" style="left:0;top:0;">'+
+     '<div class="mini-dmi-hd"><span style="font-size:9px;font-weight:700;color:#6fb0e6;letter-spacing:.8px;">&#10495; CABIN DMI</span>'+
+     '<span style="font-size:9px;font-weight:700;color:#a3c25f;font-family:\'Barlow Semi Condensed\',sans-serif;">L'+sim.dmiLevel+' &middot; '+sim.dmiMode.toUpperCase()+'</span></div>'+
+     dmiSpeedoSvg(380,340,200,133,17)+
+   '</div>'+
+   '<div class="mini-arrowpad" id="miniArrows" style="left:204px;top:54px;">'+
+     '<div class="sim-arrowgrid">'+
+       '<div></div><button id="miniUp">&#9650;</button><div></div>'+
+       '<button id="miniLeft">&#9664;</button><div class="dotcell"><div class="dot"></div></div><button id="miniRight">&#9654;</button>'+
+       '<div></div><button id="miniDown">&#9660;</button><div></div>'+
+     '</div>'+
    '</div>'+
  '</div>';
 }
@@ -988,8 +991,8 @@ function trackLayoutMarkup(){
    '</div>'+
    '<div class="sim-stage" style="height:'+stageH+'px;">'+
      (isC?crossover3Markup():siding4Markup())+
-     miniDmiMarkup()+
    '</div>'+
+   miniDmiMarkup()+
    '<div class="sim-drivebar">'+
      '<button class="sim-trainbtn'+(sim.activeTrain===1?' on':'')+'" id="trainBtn1" style="border-color:#2f6fd6;">Track 1 &middot; T1</button>'+
      '<button class="sim-trainbtn'+(sim.activeTrain===2?' on':'')+'" id="trainBtn2" style="border-color:#c07820;">Track 2 &middot; T2</button>'+
@@ -1269,26 +1272,32 @@ function wireSimulator(){
  var clearQ=document.getElementById("clearQBtn");
  if(clearQ)clearQ.onclick=function(){sim.questionText="";renderSimulator();};
 
- var miniDmi=document.getElementById("miniDmi");
- if(miniDmi)wireMiniDmiDrag(miniDmi);
+ var miniDmiDock=document.getElementById("miniDmiDock");
+ if(miniDmiDock)wireMiniDmiDrag(miniDmiDock);
+ function dockBasePos(){
+   var d=document.getElementById("miniDmiDock");
+   if(!d)return {x:0,y:0};
+   var r=d.getBoundingClientRect(), pr=d.parentElement.getBoundingClientRect();
+   return {x:r.left-pr.left, y:r.top-pr.top};
+ }
  var mu=document.getElementById("miniUp"); if(mu)mu.onclick=function(){
-   sim.miniDmiY=Math.max(0,(sim.miniDmiY!==null?sim.miniDmiY:12)-20);
-   if(sim.miniDmiX===null)sim.miniDmiX=window.innerWidth-230;
+   if(sim.miniDmiX===null){var p=dockBasePos();sim.miniDmiX=p.x;sim.miniDmiY=p.y;}
+   sim.miniDmiY=Math.max(0,sim.miniDmiY-20);
    renderSimulator();
  };
  var md=document.getElementById("miniDown"); if(md)md.onclick=function(){
-   sim.miniDmiY=(sim.miniDmiY!==null?sim.miniDmiY:12)+20;
-   if(sim.miniDmiX===null)sim.miniDmiX=window.innerWidth-230;
+   if(sim.miniDmiX===null){var p=dockBasePos();sim.miniDmiX=p.x;sim.miniDmiY=p.y;}
+   sim.miniDmiY=sim.miniDmiY+20;
    renderSimulator();
  };
  var ml=document.getElementById("miniLeft"); if(ml)ml.onclick=function(){
-   sim.miniDmiX=Math.max(0,(sim.miniDmiX!==null?sim.miniDmiX:(window.innerWidth-230))-20);
-   if(sim.miniDmiY===null)sim.miniDmiY=12;
+   if(sim.miniDmiX===null){var p=dockBasePos();sim.miniDmiX=p.x;sim.miniDmiY=p.y;}
+   sim.miniDmiX=Math.max(0,sim.miniDmiX-20);
    renderSimulator();
  };
  var mr=document.getElementById("miniRight"); if(mr)mr.onclick=function(){
-   sim.miniDmiX=(sim.miniDmiX!==null?sim.miniDmiX:(window.innerWidth-230))+20;
-   if(sim.miniDmiY===null)sim.miniDmiY=12;
+   if(sim.miniDmiX===null){var p=dockBasePos();sim.miniDmiX=p.x;sim.miniDmiY=p.y;}
+   sim.miniDmiX=sim.miniDmiX+20;
    renderSimulator();
  };
 
@@ -1312,6 +1321,10 @@ function wireMiniDmiDrag(el){
    dragging=true;
    startX=e.clientX;startY=e.clientY;
    var p=getPos();baseX=p.x;baseY=p.y;
+   el.style.position="absolute";
+   el.style.margin="0";
+   el.style.left=Math.round(p.x)+"px";
+   el.style.top=Math.round(p.y)+"px";
    el.setPointerCapture&&el.setPointerCapture(e.pointerId);
  });
  el.addEventListener("pointermove",function(e){
@@ -1320,13 +1333,6 @@ function wireMiniDmiDrag(el){
    sim.miniDmiY=Math.max(0,baseY+(e.clientY-startY));
    el.style.left=Math.round(sim.miniDmiX)+"px";
    el.style.top=Math.round(sim.miniDmiY)+"px";
-   el.style.right="auto";
-   var arrows=document.getElementById("miniArrows");
-   if(arrows){
-     arrows.style.left=(Math.round(sim.miniDmiX)+204)+"px";
-     arrows.style.top=(Math.round(sim.miniDmiY)+54)+"px";
-     arrows.style.right="auto";
-   }
  });
  function end(){dragging=false;}
  el.addEventListener("pointerup",end);
