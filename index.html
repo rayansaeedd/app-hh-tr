@@ -886,8 +886,9 @@ function siding4Markup(){
    var headLeft=left-10;
    var headW=126, headH=56;
    var labelX=tagRight?(headLeft+headW+26):(headLeft-26);
+   var labelRot=tagRight?90:-90;
    return signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
-     '<div style="position:absolute;left:'+labelX+'px;top:'+(top+headH/2-2)+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
+     '<div style="position:absolute;left:'+labelX+'px;top:'+(top+headH/2-2)+'px;transform:rotate('+labelRot+'deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
  function trackMarker(left,top){
    return '<svg style="position:absolute;left:'+left+'px;top:'+top+'px;z-index:8;" width="36" height="36" viewBox="0 0 36 36"><polygon points="18,2 34,18 18,34 2,18" fill="#fff" stroke="#2268d4" stroke-width="3"></polygon><polygon points="18,8 28,18 18,28 8,18" fill="#2268d4"></polygon></svg>';
