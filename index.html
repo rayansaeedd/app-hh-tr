@@ -56,36 +56,67 @@
   .divider{border:none;border-top:2px dashed #cbd5e1;margin:24px 0;}
   .empty{text-align:center;color:#94a3b8;margin-top:60px;font-size:14px;padding:0 24px;}
 
-  /* ---- Simulator (ETCS Cab DMI) ---- */
-  .simwrap{padding:0 16px 32px;font-family:'Barlow',-apple-system,Roboto,sans-serif;}
-  .simhead{margin:4px 0 14px;}
-  .simhead .st{font-size:20px;font-weight:800;color:#0f172a;}
-  .simhead .ss{font-size:12px;color:#64748b;margin-top:2px;}
-  .simq{background:#0d1f35;border:1.5px solid #1e3a5a;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#e6ebf2;font-style:italic;}
-  .dmi{background:#0a1a31;border:2px solid #20344e;border-radius:16px;padding:14px 10px 10px;box-shadow:0 8px 24px rgba(0,0,0,.35);}
-  .dmi-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0 6px 6px;}
-  .dmi-tag{font-size:11px;font-weight:700;letter-spacing:.04em;color:#6fb0e6;}
-  .dmi-status{font-size:11px;color:#a3c25f;text-align:right;}
-  .strip{position:relative;height:54px;background:#0e2438;border-radius:8px;margin:0 6px 12px;overflow:hidden;border:1px solid #1e3a5a;}
-  .strip .rail{position:absolute;left:0;right:0;top:32px;height:4px;background:#28415c;}
-  .strip .train{position:absolute;top:14px;width:34px;height:18px;background:#e8edf3;border-radius:9px 4px 4px 9px;box-shadow:0 0 4px rgba(0,0,0,.4);}
-  .strip .sig{position:absolute;right:14px;top:8px;display:flex;flex-direction:column;gap:3px;background:#111;border-radius:3px;padding:4px;border:2px solid #333;}
-  .strip .sig .lamp{width:9px;height:9px;border-radius:50%;background:#111;}
-  .overspeed{display:none;background:#3a0f0f;border:1.5px solid #ff3b30;color:#ffb4ad;font-size:12px;font-weight:700;text-align:center;border-radius:8px;padding:6px;margin:0 6px 10px;letter-spacing:.04em;}
-  .overspeed.show{display:block;}
-  .simpanel{margin-top:16px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;padding:14px;}
-  .simpanel .pl{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px;}
-  .simpanel .pl:first-child{margin-top:0;}
-  .btnrow{display:flex;flex-wrap:wrap;gap:6px;}
-  .sbtn{border:1.5px solid #e2e8f0;background:#f8fafc;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:600;color:#334155;cursor:pointer;}
-  .sbtn.on{background:#0f172a;border-color:#0f172a;color:#fff;}
-  .sbtn.gold{box-shadow:0 0 0 2px #f0e8b0 inset;}
-  .simrange{width:100%;margin-top:6px;accent-color:#0ea5e9;}
-  .drivebtn{width:100%;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;color:#fff;cursor:pointer;margin-top:4px;}
-  .drivebtn.stopped{background:#0ea5e9;}
-  .drivebtn.running{background:#ef4444;}
-  .resetbtn{width:100%;border:1.5px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:10px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;margin-top:8px;}
-  .simq-input{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:13px;margin-top:6px;resize:vertical;min-height:50px;font-family:inherit;}
+  /* ---- Simulator (ETCS Signal Trainer) ---- */
+  @keyframes flash{0%,49%{opacity:1}50%,100%{opacity:.07}}
+  .simwrap{background:#0e1116;margin:0 -16px -32px;padding:10px 8px 24px;font-family:'Barlow',-apple-system,Roboto,sans-serif;color:#e7ecf2;min-height:100vh;}
+  .sim-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:0 4px 8px;}
+  .sim-title{font-family:'Barlow Semi Condensed',sans-serif;font-weight:900;font-style:italic;font-size:17px;color:#f0e8b0;}
+  .sim-sub{font-size:10px;color:#8b97a6;margin-top:2px;}
+  .sim-speed{text-align:right;}
+  .sim-speed .l{font-size:9px;color:#8b97a6;letter-spacing:1px;}
+  .sim-speed .v{font-family:'Barlow Semi Condensed',sans-serif;font-weight:900;font-size:20px;line-height:1;}
+  .sim-speed .v span{font-size:11px;color:#8b97a6;}
+  .sim-tabs{display:flex;gap:5px;align-items:flex-end;border-bottom:1px solid #2a323d;padding:0 4px;margin-bottom:8px;}
+  .simtab{padding:8px 12px;border-radius:8px 8px 0 0;font-weight:700;font-size:12px;font-family:inherit;cursor:pointer;border:1px solid #2a323d;border-bottom:none;background:#0c0f13;color:#8b97a6;}
+  .simtab.on{background:#161b22;color:#f0e8b0;}
+  .sim-qbanner{width:100%;background:#0d1f35;border:1.5px solid #1e3a5a;border-radius:10px;padding:10px 14px;margin:0 0 8px;display:flex;align-items:flex-start;gap:10px;}
+  .sim-qbanner .q{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#1d3a5c;border:2px solid #3a7ab8;display:flex;align-items:center;justify-content:center;color:#6fb0e6;font-weight:900;font-size:13px;}
+  .sim-qbanner .t{font-size:13px;font-weight:600;color:#e6ebf2;line-height:1.45;}
+  .sim-ltabs{display:flex;gap:0;margin-bottom:-1px;padding:0 4px;}
+  .ltab{padding:5px 12px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid #2a323d;border-bottom:none;background:#e8e8e8;color:#666;}
+  .ltab.on{background:#fff;color:#111;}
+  .sim-stage{width:100%;overflow:hidden;position:relative;}
+  .sim-stage-track{transform-origin:top left;position:relative;background:#fff;border:2px solid #bbb;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .sim-drivebar{padding:6px 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .sim-runbtn{padding:11px 20px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;border:none;color:#fff;}
+  .sim-runbtn.go{background:#3ea537;}
+  .sim-runbtn.stop{background:#e23b3b;}
+  .sim-trainbtn{flex:1;padding:11px 8px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;background:#0f1318;border:2px solid #2a323d;color:#8b97a6;}
+  .sim-trainbtn.on{background:#1d2533;color:#d8e8ff;}
+  .sim-dmistage{width:100%;overflow:hidden;display:flex;justify-content:center;}
+  .sim-panels{width:100%;display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;padding:0 4px;}
+  .sim-panel{flex:1;min-width:260px;background:#161b22;border:1px solid #2a323d;border-radius:13px;padding:12px 13px;display:flex;flex-direction:column;gap:10px;}
+  .sim-panel-lbl{font-size:10px;color:#8b97a6;letter-spacing:1px;font-weight:600;}
+  .sim-settbtn{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:#0f1318;border:1.5px solid #2a323d;color:#8b97a6;display:flex;align-items:center;gap:5px;}
+  .sim-sec-lbl{font-size:9px;color:#8b97a6;letter-spacing:.7px;font-weight:600;}
+  .sim-grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  .sim-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+  .sim-iconbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px;border-radius:8px;cursor:pointer;font-family:inherit;background:#0f1318;border:2px solid #2a323d;color:#8b97a6;gap:2px;}
+  .sim-iconbtn.on{background:#1d2a3a;border-color:#6fb0e6;color:#cfe6fb;}
+  .sim-iconbtn span{font-size:9px;}
+  .sim-sigbtn{display:flex;flex-direction:column;align-items:center;padding:8px 5px;border-radius:9px;cursor:pointer;font-family:'Barlow Semi Condensed';font-weight:900;font-style:italic;font-size:16px;background:#0f1318;border:2px solid #2a323d;color:#8b97a6;}
+  .sim-sigbtn.on{background:#1d2a3a;border:2px solid #f0c040;color:#f0e8b0;box-shadow:0 0 0 4px #f0c040,0 0 24px 8px rgba(240,192,64,.55);}
+  .sim-aspbtn{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:600;background:#0f1318;border:2px solid #2a323d;color:#8b97a6;}
+  .sim-aspbtn.on{background:#1d2a3a;border:2px solid #3ea537;color:#b8e0c0;}
+  .sim-lamprow{display:flex;gap:4px;align-items:center;justify-content:center;padding:3px 5px;background:#0c0c0e;border-radius:2px;border:2px solid #333;margin-bottom:4px;}
+  .sim-asplabel{font-size:11px;line-height:1.2;text-align:center;margin-top:1px;}
+  .sim-range{width:100%;height:6px;}
+  .sim-resetbtn{padding:10px 12px;border-radius:9px;border:1px solid #2a323d;background:#0f1318;color:#c4ccd5;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;}
+  .sim-qta{flex:1;min-height:64px;background:#0f1318;border:1.5px solid #2a323d;border-radius:7px;color:#e6ebf2;font-size:13px;font-family:'Barlow',sans-serif;padding:8px 10px;resize:vertical;outline:none;}
+  .sim-clearbtn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:#0f1318;border:1.5px solid #2a323d;color:#8b97a6;}
+  .mini-dmi{position:absolute;width:200px;height:150px;background:#0a1a31;border:1.5px solid #20344e;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.55);z-index:30;touch-action:none;}
+  .mini-dmi-hd{position:absolute;top:0;left:0;right:0;background:#0d2040;border-bottom:1px solid #1a3050;padding:2px 7px;display:flex;align-items:center;justify-content:space-between;z-index:2;}
+  .mini-arrowpad{position:absolute;z-index:31;}
+  .mini-arrowpad button{background:#0d2040;border:1px solid #20344e;border-radius:4px;color:#6fb0e6;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .sim-arrowgrid{display:grid;grid-template-columns:24px 24px 24px;grid-template-rows:24px 24px 24px;gap:2px;}
+  .sim-arrowgrid .dotcell{background:#0d2040;border:1px solid #20344e;border-radius:4px;display:flex;align-items:center;justify-content:center;}
+  .sim-arrowgrid .dotcell .dot{width:5px;height:5px;border-radius:50%;background:#3a5a7a;}
+  .sim-stationsign{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);border:3px solid #111;border-radius:3px;overflow:hidden;min-width:230px;text-align:center;z-index:5;}
+  .sim-stationsign .hd{padding:7px 20px 4px;}
+  .sim-stationsign .nm{font-family:'Barlow Semi Condensed';font-weight:900;font-size:30px;color:#fff;line-height:1;}
+  .sim-stationsign .km{display:flex;align-items:center;justify-content:center;gap:10px;margin:3px 0 4px;font-family:'Barlow Semi Condensed';font-weight:700;font-size:14px;color:#fff;}
+  .sim-stationsign .ft{background:#1f3aa8;padding:3px 12px;}
+  .sim-stationsign .ft div{font-family:'Barlow Semi Condensed';font-weight:900;font-size:12px;color:#fff;letter-spacing:1px;}
 </style>
 </head>
 <body>
@@ -495,210 +526,845 @@ function situation(){
    ATO-style cab display.
    ============================================================ */
 var MAX_SPEED=560, ACCEL=200, DECEL=300;
-var ASPECTS=[
- {id:"redblue", label:"Red / Blue", lamps:["red","blue","off"], perm:0},
- {id:"red", label:"Red", lamps:["red","off","off"], perm:0},
- {id:"redfixed", label:"Red Fixed", lamps:["red","off","off"], perm:160},
- {id:"redflash", label:"Red Flash", lamps:["redflash","off","off"], perm:160},
- {id:"white", label:"White", lamps:["off","off","white"], perm:300},
- {id:"flash", label:"White Flash", lamps:["off","off","whiteflash"], perm:300}
-];
 var MODES=[
  {id:"fs", label:"Full Sup."},
  {id:"sr", label:"Staff Resp."},
  {id:"sh", label:"Shunting"},
- {id:"os", label:"On Sight"},
- {id:"un", label:"Unfitted"}
+ {id:"un", label:"Unfitted"},
+ {id:"os", label:"On Sight"}
 ];
-var LAMP_COLOR={red:"#ff2b2b",blue:"#2299ff",white:"#ffffff",off:"#1a1a1a",redflash:"#ff2b2b",whiteflash:"#ffffff"};
+var ASPECT_DEFS=[
+ ["red","Red only"],
+ ["redblue","Red + Blue"],
+ ["flash","Flashing White"],
+ ["white","Fixed White"],
+ ["redflash","Red + Flash White"],
+ ["redfixed","Red + Fixed White"]
+];
+var SIG_DEFS_BASE=[{id:"E4",fn:"L"},{id:"E1",fn:"R"},{id:"E2",fn:"L"},{id:"E3",fn:"R"}];
+var SIG_DEFS_EXTRA=[
+ {id:"X11",fn:"R",label:"X1/1"},{id:"X21",fn:"L",label:"X2/1"},
+ {id:"X12",fn:"R",label:"X1/2"},{id:"X22",fn:"L",label:"X2/2"},
+ {id:"X14",fn:"R",label:"X1/4"},{id:"X24",fn:"L",label:"X2/4"},
+ {id:"S2",fn:"L"},{id:"S3",fn:"R"}
+];
+var ASPECT_PERM={red:0,redblue:0,redfixed:160,redflash:160,white:300,flash:300};
+
 var sim={
- level:2, mode:"fs", rbc:"connected", aspect:"redblue",
- throttle:0.55, running:false,
- v:0, displayV:0, dispKmh:0, odometer:0, trainPos:0.08,
- raf:null, lastT:null, flashOn:true, flashT:0
+ t1x:2250, v1:0, running1:false,
+ t2x:-320, v2:0, running2:false,
+ displayV:0, dispKmh:0, odometer:0,
+ throttle:0.55,
+ aspects:{E1:"redblue",E2:"redblue",E3:"redblue",E4:"redblue"},
+ layout:"crossover3",
+ aspects4:{E4:"redblue",E1:"redblue",E2:"redblue",E3:"redblue",X11:"redblue",X21:"redblue",X12:"redblue",X22:"redblue",X14:"redblue",X24:"redblue",S2:"redblue",S3:"redblue"},
+ activeSig4:"E4",
+ activeSig:"E1",
+ activeTrain:1,
+ scale:1, scaleS:1, dmiScale:1,
+ view:"track",
+ dmiSpeed:133, dmiSpeedManual:false,
+ dmiLevel:2, dmiMode:"fs", dmiRbc:"connected",
+ settingsOpen:true,
+ dmiPermManual:null,
+ miniDmiX:null, miniDmiY:null,
+ questionText:"",
+ raf:null, lastT:null
 };
-function aspectById(id){for(var i=0;i<ASPECTS.length;i++){if(ASPECTS[i].id===id)return ASPECTS[i];}return ASPECTS[0];}
-function permSpeed(){return aspectById(sim.aspect).perm;}
-function polarPt(cx,cy,r,deg){var rad=(deg-90)*Math.PI/180;return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)];}
-function arcPath(cx,cy,r,a0,a1){
- if(a1<=a0)return "";
- var p0=polarPt(cx,cy,r,a0),p1=polarPt(cx,cy,r,a1);
- var large=(a1-a0)>180?1:0;
- return "M"+p0[0].toFixed(1)+","+p0[1].toFixed(1)+" A"+r+","+r+" 0 "+large+" 1 "+p1[0].toFixed(1)+","+p1[1].toFixed(1);
-}
-function dmiSvg(){
- var cx=186,cy=168,r=130;
- var ticks="";
- for(var v=0;v<=300;v+=10){
-   var ang=225+(v/300)*270;
-   var major=(v%50===0);
-   var p1=polarPt(cx,cy,r,ang), p2=polarPt(cx,cy,r-(major?17:9),ang);
-   ticks+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="#cdd6e2" stroke-width="'+(major?2.5:1.3)+'"/>';
-   if(major){
-     var lp=polarPt(cx,cy,r-32,ang);
-     ticks+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" fill="#eef1f6" font-size="14" font-weight="700" text-anchor="middle" dominant-baseline="middle">'+v+'</text>';
-   }
+
+/* ---------- lamp / aspect helpers ---------- */
+function simLamp(sz,on,col,glow,off,flash){
+ var s="width:"+sz+"px;height:"+sz+"px;border-radius:50%;flex:none;";
+ if(on){
+   s+="background:"+col+";box-shadow:0 0 "+Math.round(sz*.8)+"px "+Math.round(sz*.28)+"px "+glow+";";
+   if(flash)s+="animation:flash 1.1s steps(1) infinite;";
+ }else{
+   s+="background:"+off+";";
  }
- var bgArc=arcPath(cx,cy,r,225,495);
- var permArc=arcPath(cx,cy,r,225,225+(permSpeed()/300)*270);
- return '<svg id="dmisvg" viewBox="0 0 372 340" style="width:100%;display:block;">'+
-   '<path d="'+bgArc+'" fill="none" stroke="#1d3350" stroke-width="14"/>'+
-   '<path d="'+permArc+'" fill="none" stroke="#8c8f94" stroke-width="14"/>'+
-   ticks+
-   '<g id="needle"></g>'+
-   '<circle cx="'+cx+'" cy="'+cy+'" r="27" fill="#fff" stroke="#b9c0c9" stroke-width="2"/>'+
-   '<text id="dspeed" x="'+cx+'" y="'+(cy+1)+'" fill="#0a1a31" font-size="23" font-weight="800" text-anchor="middle" dominant-baseline="middle">0</text>'+
-   '<text x="'+cx+'" y="'+(cy+44)+'" fill="#8ba8c0" font-size="11" text-anchor="middle">ODO</text>'+
-   '<text id="dodo" x="'+cx+'" y="'+(cy+60)+'" fill="#cdd6e2" font-size="15" font-weight="700" text-anchor="middle">0 m</text>'+
- '</svg>';
+ return s;
 }
-function needleEl(){
- var cx=186,cy=168;
- var ang=225+(Math.max(0,Math.min(300,sim.dispKmh))/300)*270;
- var tip=polarPt(cx,cy,118,ang);
- var b1=polarPt(cx,cy,16,ang+90);
- var b2=polarPt(cx,cy,16,ang-90);
- return '<polygon points="'+tip[0].toFixed(1)+','+tip[1].toFixed(1)+' '+b1[0].toFixed(1)+','+b1[1].toFixed(1)+' '+b2[0].toFixed(1)+','+b2[1].toFixed(1)+'" fill="#fff"/>';
+function decodeAspect(id){
+ return {
+   r:["red","redblue","redflash","redfixed"].indexOf(id)>=0,
+   w:["white","flash","redflash","redfixed"].indexOf(id)>=0,
+   b:["redblue"].indexOf(id)>=0,
+   wf:["flash","redflash"].indexOf(id)>=0
+ };
 }
-function lampSvg(state,flashOn){
- var c=LAMP_COLOR[state]||"#1a1a1a";
- if((state==="redflash"||state==="whiteflash")&&!flashOn)c="#1a1a1a";
- return '<div class="lamp" style="background:'+c+'"></div>';
+function lampsL(aspect,sz){
+ var d=decodeAspect(aspect);
+ return {
+   l1:simLamp(sz,d.b,"#2f7bff","rgba(47,123,255,.92)","#12213a",false),
+   l2:simLamp(sz,d.w,"#ffffff","rgba(255,255,255,.95)","#282828",d.wf),
+   l3:simLamp(sz,d.r,"#ff3a30","rgba(255,58,48,.92)","#2a1010",false)
+ };
+}
+function lampsR(aspect,sz){
+ var d=decodeAspect(aspect);
+ return {
+   l1:simLamp(sz,d.r,"#ff3a30","rgba(255,58,48,.92)","#2a1010",false),
+   l2:simLamp(sz,d.w,"#ffffff","rgba(255,255,255,.95)","#282828",d.wf),
+   l3:simLamp(sz,d.b,"#2f7bff","rgba(47,123,255,.92)","#12213a",false)
+ };
+}
+function lampDivs(l){return '<div style="'+l.l1+'"></div><div style="'+l.l2+'"></div><div style="'+l.l3+'"></div>';}
+
+function curSigDefs(){return sim.layout==="siding4"?SIG_DEFS_BASE.concat(SIG_DEFS_EXTRA):SIG_DEFS_BASE;}
+function curAspects(){return sim.layout==="crossover3"?sim.aspects:sim.aspects4;}
+function curActiveSig(){return sim.layout==="crossover3"?sim.activeSig:sim.activeSig4;}
+function sigDefById(id){var defs=curSigDefs();for(var i=0;i<defs.length;i++){if(defs[i].id===id)return defs[i];}return defs[0];}
+function setActiveSig(id){
+ if(sim.layout==="crossover3")sim.activeSig=id; else sim.activeSig4=id;
+ renderSimulator();
+}
+function setAspectForActiveSig(id){
+ if(sim.layout==="crossover3"){sim.aspects[sim.activeSig]=id;}
+ else{sim.aspects4[sim.activeSig4]=id;}
+ renderSimulator();
+}
+
+/* ---------- geometry helpers (DMI speedometer) ---------- */
+var DMI_CX=186, DMI_CY=168, DMI_ROUT=150;
+function dmiPolar(r,deg){
+ var rad=deg*Math.PI/180;
+ return [DMI_CX+r*Math.sin(rad), DMI_CY-r*Math.cos(rad)];
+}
+function dmiSpDeg(v){return 225+Math.max(0,Math.min(300,v))/300*270;}
+function dmiArcPath(r,d0,d1){
+ var p0=dmiPolar(r,d0),p1=dmiPolar(r,d1);
+ var large=(d1-d0)>180?1:0;
+ return "M "+p0[0].toFixed(1)+" "+p0[1].toFixed(1)+" A "+r+" "+r+" 0 "+large+" 1 "+p1[0].toFixed(1)+" "+p1[1].toFixed(1);
+}
+function dmiTicksArr(){
+ var out=[];
+ for(var v=0;v<=300;v+=10){
+   var major=(v%50===0), deg=dmiSpDeg(v);
+   var a=dmiPolar(DMI_ROUT,deg), b=dmiPolar(DMI_ROUT-(major?17:9),deg);
+   out.push({x1:a[0].toFixed(1),y1:a[1].toFixed(1),x2:b[0].toFixed(1),y2:b[1].toFixed(1),w:major?2.5:1.3});
+ }
+ return out;
 }
 function fmtOdo(m){
  if(m<1000)return Math.floor(m)+" m";
  return (m/1000).toFixed(3)+" km";
 }
-function simulator(){
- var h='<button class="back" id="back">&#8592; Categories</button><div class="simwrap">'+
-   '<div class="simhead"><div class="st">ETCS Cab Simulator</div><div class="ss">Drive, read the DMI, and respect the signal aspect</div></div>'+
-   '<div class="dmi">'+
-     '<div class="dmi-row"><span class="dmi-tag">L'+sim.level+' &middot; '+sim.mode.toUpperCase()+'</span><span class="dmi-status" id="rbcstat"></span></div>'+
-     dmiSvg()+
-     '<div class="overspeed" id="overspeed">OVERSPEED &mdash; BRAKE DEMAND</div>'+
-     '<div class="strip"><div class="rail"></div><div class="train" id="simtrain" style="background:#e8edf3;"></div>'+
-       '<div class="sig" id="sigbox"></div></div>'+
+function autoPermSpeed(){
+ var trainX,cand;
+ if(sim.activeTrain===1){
+   trainX=sim.t1x+155;
+   cand=[{x:1760,asp:sim.aspects.E1},{x:790,asp:sim.aspects.E4}].filter(function(o){return o.x<trainX;});
+   cand.sort(function(a,b){return b.x-a.x;});
+ }else{
+   trainX=sim.t2x+155;
+   cand=[{x:790,asp:sim.aspects.E2},{x:1760,asp:sim.aspects.E3}].filter(function(o){return o.x>trainX;});
+   cand.sort(function(a,b){return a.x-b.x;});
+ }
+ var tgt=cand[0]||null;
+ if(!tgt)return 300;
+ var p=ASPECT_PERM[tgt.asp];
+ return (p===undefined)?300:p;
+}
+function curPermSpeed(){
+ return sim.dmiPermManual!==null?sim.dmiPermManual:autoPermSpeed();
+}
+function curKmh(){
+ if(sim.dmiSpeedManual)return Math.max(0,Math.min(300,Math.round(sim.dmiSpeed)));
+ return sim.dispKmh;
+}
+
+/* ---------- DMI speedometer SVG (shared between mini + full) ---------- */
+function dmiSpeedoSvg(viewBoxW,viewBoxH,wpx,hpx,extraTop){
+ var perm=curPermSpeed();
+ var permArc=perm<=0?"":dmiArcPath(DMI_ROUT+8,dmiSpDeg(0),dmiSpDeg(perm));
+ var kmh=curKmh();
+ var ticks=dmiTicksArr().map(function(t){
+   return '<line x1="'+t.x1+'" y1="'+t.y1+'" x2="'+t.x2+'" y2="'+t.y2+'" stroke="#e6ebf2" stroke-width="'+t.w+'"></line>';
+ }).join("");
+ var needleT="rotate("+dmiSpDeg(kmh).toFixed(1)+" "+DMI_CX+" "+DMI_CY+")";
+ var labels=[[103,251,"0"],[69,168,"50"],[103,85,"100"],[186,51,"150"],[269,85,"200"],[303,168,"250"],[269,251,"300"]]
+   .map(function(l){return '<text x="'+l[0]+'" y="'+l[1]+'" font-size="17" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#eef1f6">'+l[2]+'</text>';}).join("");
+ var modeVis={fs:"none",sr:"none",sh:"none",os:"none",un:"none"}; modeVis[sim.dmiMode]="inline";
+ var lvlVis=[sim.dmiLevel===0?"inline":"none",sim.dmiLevel===1?"inline":"none",sim.dmiLevel===2?"inline":"none"];
+ var rbcConn=sim.dmiRbc==="connected"?"inline":"none", rbcNone=sim.dmiRbc==="none"?"inline":"none";
+ return '<svg viewBox="0 0 '+viewBoxW+' '+viewBoxH+'" style="position:absolute;top:'+(extraTop||0)+'px;left:0;width:'+wpx+'px;height:'+hpx+'px;" font-family="Barlow,sans-serif">'+
+   '<path d="'+permArc+'" fill="none" stroke="#8c8f94" stroke-width="16" stroke-linecap="round"></path>'+
+   ticks+labels+
+   '<polygon points="186,46 182,168 190,168" fill="#d2d6dc" transform="'+needleT+'"></polygon>'+
+   '<circle cx="186" cy="168" r="27" fill="#f4f5f7" stroke="#b9c0c9" stroke-width="1.5"></circle>'+
+   '<text x="186" y="169" fill="#0a1a31" font-size="23" font-weight="800" text-anchor="middle" dominant-baseline="central">'+kmh+'</text>'+
+   '<text x="186" y="210" fill="#8ba8c0" font-size="11" text-anchor="middle" letter-spacing="1.2">ODO</text>'+
+   '<text x="186" y="228" fill="#cdd6e2" font-size="15" font-weight="800" text-anchor="middle">'+fmtOdo(sim.odometer)+'</text>'+
+   '<rect x="296" y="272" width="40" height="34" rx="2" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<g display="'+modeVis.fs+'"><ellipse cx="316" cy="289" rx="15" ry="8" fill="none" stroke="#cdd6e2" stroke-width="1.6"></ellipse><circle cx="316" cy="289" r="4.5" fill="#cdd6e2"></circle></g>'+
+   '<g display="'+modeVis.sr+'"><ellipse cx="316" cy="289" rx="14" ry="7" fill="none" stroke="#cdd6e2" stroke-width="1.6"></ellipse><circle cx="316" cy="289" r="4" fill="#cdd6e2"></circle><line x1="303" y1="276" x2="329" y2="302" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line><line x1="329" y1="276" x2="303" y2="302" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line></g>'+
+   '<g display="'+modeVis.sh+'"><rect x="303" y="283" width="22" height="12" rx="1" fill="none" stroke="#cdd6e2" stroke-width="1.7"></rect><line x1="303" y1="289" x2="297" y2="289" stroke="#cdd6e2" stroke-width="1.7"></line><polygon points="297,289 302,286.5 302,291.5" fill="#cdd6e2"></polygon><line x1="328" y1="289" x2="334" y2="289" stroke="#cdd6e2" stroke-width="1.7"></line><polygon points="334,289 329,286.5 329,291.5" fill="#cdd6e2"></polygon></g>'+
+   '<g display="'+modeVis.os+'"><polygon points="298,302 332,289 298,276" fill="none" stroke="#cdd6e2" stroke-width="1.8"></polygon><ellipse cx="326" cy="289" rx="5" ry="3.5" fill="none" stroke="#cdd6e2" stroke-width="1.4"></ellipse><circle cx="326" cy="289" r="1.8" fill="#cdd6e2"></circle></g>'+
+   '<g display="'+modeVis.un+'"><line x1="300" y1="303" x2="321" y2="274" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line><line x1="308" y1="303" x2="329" y2="274" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line><line x1="301" y1="300" x2="309" y2="300" stroke="#cdd6e2" stroke-width="1.8"></line><line x1="305" y1="293" x2="313" y2="293" stroke="#cdd6e2" stroke-width="1.8"></line></g>'+
+   '<g display="'+lvlVis[0]+'"><rect x="6" y="309" width="44" height="28" fill="none" stroke="#2c466a" stroke-width="1.5"></rect><text x="28" y="323" font-size="16" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#e6ebf2">0</text><rect x="9" y="330" width="36" height="6" fill="#cdd6e2"></rect></g>'+
+   '<g display="'+lvlVis[1]+'"><rect x="6" y="309" width="44" height="28" fill="none" stroke="#2c466a" stroke-width="1.5"></rect><text x="28" y="323" font-size="16" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#e6ebf2">1</text><rect x="9" y="330" width="36" height="6" fill="#cdd6e2"></rect></g>'+
+   '<g display="'+lvlVis[2]+'"><rect x="6" y="309" width="44" height="28" fill="none" stroke="#2c466a" stroke-width="1.5"></rect><text x="28" y="323" font-size="16" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#e6ebf2">2</text><rect x="9" y="330" width="36" height="6" fill="#cdd6e2"></rect></g>'+
+   '<g display="'+rbcConn+'"><line x1="60" y1="310" x2="60" y2="330" stroke="#cdd6e2" stroke-width="2"></line><line x1="60" y1="320" x2="69" y2="320" stroke="#cdd6e2" stroke-width="2"></line><line x1="100" y1="310" x2="100" y2="330" stroke="#cdd6e2" stroke-width="2"></line><line x1="100" y1="320" x2="91" y2="320" stroke="#cdd6e2" stroke-width="2"></line><line x1="69" y1="320" x2="91" y2="320" stroke="#cdd6e2" stroke-width="2"></line></g>'+
+   '<g display="'+rbcNone+'"><line x1="60" y1="310" x2="60" y2="330" stroke="#cdd6e2" stroke-width="2"></line><line x1="60" y1="320" x2="69" y2="320" stroke="#cdd6e2" stroke-width="2"></line><line x1="100" y1="310" x2="100" y2="330" stroke="#cdd6e2" stroke-width="2"></line><line x1="100" y1="320" x2="91" y2="320" stroke="#cdd6e2" stroke-width="2"></line><line x1="57" y1="307" x2="103" y2="333" stroke="#ff3b30" stroke-width="2"></line></g>'+
+ '</svg>';
+}
+/* full cabin DMI adds the right-side planning/softkey/status furniture */
+function dmiFullExtrasSvg(){
+ var dmiDist=[[4000,33],[2000,78],[1000,118],[500,160],[0,298]].map(function(d){return {y:d[1],ty:d[1]+4,t:String(d[0])};});
+ var distLines=dmiDist.map(function(d){
+   return '<line x1="384" y1="'+d.y+'" x2="575" y2="'+d.y+'" stroke="#5d6f88" stroke-width="1"></line><text x="379" y="'+d.ty+'" fill="#cdd6e2" font-size="13" text-anchor="end">'+d.t+'</text>';
+ }).join("");
+ return '<rect x="171" y="201" width="30" height="26" rx="2" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<text x="350" y="28" fill="#cdd6e2" font-size="15">&#8211;</text>'+
+   '<text x="350" y="304" fill="#cdd6e2" font-size="15">+</text>'+
+   distLines+
+   '<rect x="458" y="14" width="117" height="284" fill="#3a6196" opacity="0.42"></rect>'+
+   '<rect x="458" y="14" width="5" height="284" fill="#6ea0d6" opacity="0.7"></rect>'+
+   '<rect x="413" y="14" width="42" height="284" fill="#cdd1d6"></rect>'+
+   '<rect x="413" y="96" width="42" height="92" fill="#9da1a7"></rect>'+
+   '<text x="434" y="26" fill="#2a2a2a" font-size="13" font-weight="700" text-anchor="middle">+</text>'+
+   '<text x="434" y="50" fill="#2a2a2a" font-size="15" font-weight="700" text-anchor="middle">2</text>'+
+   '<text x="434" y="104" fill="#2a2a2a" font-size="13" font-weight="700" text-anchor="middle">+</text>'+
+   '<text x="434" y="146" fill="#2a2a2a" font-size="15" font-weight="700" text-anchor="middle">22</text>'+
+   '<text x="434" y="184" fill="#2a2a2a" font-size="13" font-weight="700" text-anchor="middle">&#8211;</text>'+
+   '<text x="434" y="208" fill="#2a2a2a" font-size="13" font-weight="700" text-anchor="middle">+</text>'+
+   '<text x="434" y="250" fill="#2a2a2a" font-size="15" font-weight="700" text-anchor="middle">5</text>'+
+   '<text x="434" y="294" fill="#2a2a2a" font-size="13" font-weight="700" text-anchor="middle">+</text>'+
+   '<line x1="580" y1="14" x2="580" y2="466" stroke="#20344e" stroke-width="1.5"></line>'+
+   '<line x1="580" y1="62" x2="640" y2="62" stroke="#20344e" stroke-width="1"></line>'+
+   '<line x1="580" y1="116" x2="640" y2="116" stroke="#20344e" stroke-width="1"></line>'+
+   '<line x1="580" y1="170" x2="640" y2="170" stroke="#20344e" stroke-width="1"></line>'+
+   '<line x1="580" y1="216" x2="640" y2="216" stroke="#20344e" stroke-width="1"></line>'+
+   '<text x="610" y="44" fill="#e6ebf2" font-size="17" text-anchor="middle">Main</text>'+
+   '<text x="610" y="82" fill="#e6ebf2" font-size="17" text-anchor="middle">Over-</text>'+
+   '<text x="610" y="102" fill="#e6ebf2" font-size="17" text-anchor="middle">Ride</text>'+
+   '<text x="610" y="136" fill="#6fb0e6" font-size="17" text-anchor="middle">Data</text>'+
+   '<text x="610" y="156" fill="#6fb0e6" font-size="17" text-anchor="middle">View</text>'+
+   '<text x="610" y="196" fill="#e6ebf2" font-size="17" text-anchor="middle">Spec</text>'+
+   '<path d="M603 240 l8 -8 4 4 5 -5 m-5 5 l5 0 0 -5 M605 248 q9 8 16 -2" fill="none" stroke="#cdd6e2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>'+
+   '<text x="352" y="346" fill="#8a96a8" font-size="18">ATO</text>'+
+   '<text x="455" y="332" fill="#4f9bd8" font-size="14" text-anchor="middle">Welwyn North</text>'+
+   '<text x="455" y="350" fill="#4f9bd8" font-size="14" text-anchor="middle">17:36:48</text>'+
+   '<path d="M540 330 a13 13 0 1 1 -4 -9" fill="none" stroke="#cdd6e2" stroke-width="2"></path>'+
+   '<polygon points="536,318 528,326 540,329" fill="#cdd6e2"></polygon>'+
+   '<text x="58" y="384" fill="#a3c25f" font-size="13">16:47</text>'+
+   '<text x="98" y="384" fill="#eef1f6" font-size="15">Test Message</text>'+
+   '<rect x="286" y="360" width="42" height="42" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<rect x="286" y="406" width="42" height="42" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<polygon points="307,372 297,388 317,388" fill="#dfe5ee"></polygon>'+
+   '<polygon points="307,436 297,420 317,420" fill="#dfe5ee"></polygon>'+
+   '<rect x="392" y="408" width="128" height="58" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<rect x="520" y="408" width="118" height="58" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<polygon points="456,420 466,437 456,454 446,437" fill="none" stroke="#cdd6e2" stroke-width="2"></polygon>'+
+   '<polygon points="456,431 461,437 456,443 451,437" fill="#cdd6e2"></polygon>'+
+   '<text x="579" y="443" fill="#a3c25f" font-size="16" text-anchor="middle">16:47</text>'+
+   '<rect x="0" y="74" width="36" height="30" fill="none" stroke="#1c2f47" stroke-width="1.5"></rect>'+
+   '<rect x="0" y="262" width="36" height="30" fill="none" stroke="#1c2f47" stroke-width="1.5"></rect>'+
+   '<rect x="0" y="414" width="36" height="30" fill="none" stroke="#1c2f47" stroke-width="1.5"></rect>'+
+   '<rect x="64" y="316" width="180" height="26" fill="none" stroke="#1c2f47" stroke-width="1.5"></rect>'+
+   '<rect x="248" y="316" width="42" height="26" fill="none" stroke="#1c2f47" stroke-width="1.5"></rect>';
+}
+
+/* ---------- train markup ---------- */
+function trainMarkup(label,col,mirrored){
+ var mir=mirrored?"transform:scaleX(-1);":"";
+ var bodyBack=mirrored?'transform:scaleX(-1);':"";
+ return '<div style="position:relative;width:310px;height:60px;'+mir+'">'+
+   '<div style="position:absolute;left:0;top:3px;width:310px;height:46px;border-radius:130px 12px 12px 130px;background:linear-gradient(#ffffff,#eeebe0);border:1px solid #c8c5b4;box-shadow:0 4px 10px rgba(0,0,0,.22);overflow:hidden;">'+
+     '<div style="position:absolute;left:14px;top:9px;width:46px;height:22px;background:#1b2733;border-radius:20px 5px 5px 16px;transform:skewX(-12deg);"></div>'+
+     '<div style="position:absolute;left:80px;right:12px;top:12px;height:14px;background:repeating-linear-gradient(90deg,#1b2733 0 20px,transparent 20px 36px);border-radius:3px;"></div>'+
+     '<svg viewBox="0 0 285 28" preserveAspectRatio="none" style="position:absolute;left:38px;bottom:3px;width:255px;height:18px;"><path d="M0,16 C70,16 95,4 142,4 C190,4 215,14 285,10" fill="none" stroke="#3ea537" stroke-width="5"></path><path d="M0,22 C70,22 95,10 142,10 C190,10 215,20 285,16" fill="none" stroke="#caa53a" stroke-width="4"></path></svg>'+
    '</div>'+
-   '<div class="simpanel">'+
-     '<div class="pl">ETCS Level</div><div class="btnrow" id="levelbtns"></div>'+
-     '<div class="pl">RBC Connection</div><div class="btnrow" id="rbcbtns"></div>'+
-     '<div class="pl">Driving Mode</div><div class="btnrow" id="modebtns"></div>'+
-     '<div class="pl">Signal Aspect</div><div class="btnrow" id="aspectbtns"></div>'+
-     '<div class="pl">Throttle ('+Math.round(sim.throttle*100)+'%)</div>'+
-     '<input type="range" min="0" max="100" value="'+Math.round(sim.throttle*100)+'" class="simrange" id="throttle">'+
-     '<button class="drivebtn '+(sim.running?'running':'stopped')+'" id="drivebtn">'+(sim.running?'STOP':'DRIVE')+'</button>'+
-     '<button class="resetbtn" id="resetbtn">Reset Train</button>'+
+   '<div style="position:absolute;left:-5px;top:26px;width:18px;height:14px;border-radius:50%;background:#dedad0;"></div>'+
+   '<div style="position:absolute;left:56px;top:46px;width:40px;height:11px;background:#1a1d22;border-radius:2px;"></div>'+
+   '<div style="position:absolute;left:210px;top:46px;width:40px;height:11px;background:#1a1d22;border-radius:2px;"></div>'+
+   '<div style="position:absolute;right:7px;top:6px;background:'+col+';color:#fff;font-size:9px;font-weight:900;padding:1px 5px;border-radius:3px;font-family:\'Barlow Semi Condensed\';'+bodyBack+'">'+label+'</div>'+
+ '</div>';
+}
+function signalBlock(left,top,sz,sel,lampHtml,extraBorder){
+ return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;padding:3px;background:#111;border:'+(extraBorder||5)+'px solid #111;border-radius:2px;z-index:10;'+(sel?'box-shadow:0 0 0 4px #f0c040, 0 0 24px 8px rgba(240,192,64,.55);':"")+'">'+
+   '<div style="background:#fff;padding:2px;border-radius:1px;"><div style="background:#111;display:flex;gap:7px;align-items:center;padding:6px 8px;border-radius:1px;">'+lampHtml+'</div></div>'+
+ '</div>';
+}
+function stationSign(name,km,header,big){
+ return '<div class="sim-stationsign"><div class="hd" style="background:'+header+';">'+
+   '<div class="nm">'+esc(name)+'</div>'+
+   '<div class="km"><div>Km '+km+'</div><svg width="40" height="24" viewBox="0 0 44 26"><rect x="1" y="8" width="42" height="17" fill="none" stroke="white" stroke-width="2"></rect><polyline points="1,8 22,1 43,8" fill="none" stroke="white" stroke-width="2"></polyline></svg></div>'+
+   '</div><div class="ft"><div>HSR MAKKAH-MADINAH</div></div></div>';
+}
+
+/* ---------- Track Layout: Crossover 3 ---------- */
+function crossover3Markup(){
+ var e4=lampsL(sim.aspects.E4,26), e1=lampsR(sim.aspects.E1,26);
+ var e2=lampsL(sim.aspects.E2,26), e3=lampsR(sim.aspects.E3,26);
+ var sel=curActiveSig();
+ var t1Top=152, t2Top=300;
+ var t1Style="position:absolute;left:"+Math.round(sim.t1x)+"px;top:"+t1Top+"px;width:310px;height:62px;z-index:20;will-change:left;";
+ var t2Style="position:absolute;left:"+Math.round(sim.t2x)+"px;top:"+t2Top+"px;width:310px;height:62px;z-index:20;will-change:left;";
+ function blockBoard(left,top,nl,nr){
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;display:flex;border:4px solid #111;border-radius:2px;overflow:hidden;width:128px;height:88px;z-index:6;">'+
+     '<div style="width:36px;background:#111;display:flex;align-items:center;justify-content:center;"><div style="writing-mode:vertical-rl;transform:rotate(180deg);color:#fff;font-weight:900;font-size:15px;font-family:\'Barlow Semi Condensed\';letter-spacing:1px;">'+nl+'</div></div>'+
+     '<div style="flex:1;background:#2268d4;display:flex;align-items:center;justify-content:center;"><svg width="44" height="60" viewBox="0 0 44 60"><polygon points="22,58 2,28 14,28 14,2 30,2 30,28 42,28" fill="#f5c400"></polygon></svg></div>'+
+     '<div style="width:36px;background:#111;display:flex;align-items:center;justify-content:center;"><div style="writing-mode:vertical-rl;transform:rotate(180deg);color:#fff;font-weight:900;font-size:15px;font-family:\'Barlow Semi Condensed\';letter-spacing:1px;">'+nr+'</div></div>'+
+   '</div>';
+ }
+ function sBoard(left,top){
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;width:32px;height:32px;border:3px solid #111;background:#fff;display:flex;align-items:center;justify-content:center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:22px;color:#111;z-index:5;">S</div>';
+ }
+ function sigLabel(left,top,txt){
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:28px;color:#111;white-space:nowrap;z-index:8;">'+txt+'</div>';
+ }
+ return '<div class="sim-stage-track" style="width:2600px;height:520px;transform:scale('+sim.scale+');">'+
+   '<div style="position:absolute;left:0;right:0;top:212px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:0;right:0;top:362px;height:10px;background:#111;z-index:2;"></div>'+
+   '<svg style="position:absolute;left:0;top:0;width:2600px;height:520px;overflow:visible;pointer-events:none;z-index:3;">'+
+     '<path d="M 1180,212 C 1180,288 1420,288 1420,362" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 1180,222 C 1180,298 1420,298 1420,372" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+   '</svg>'+
+   blockBoard(16,172,"0994","0660")+blockBoard(16,322,"0993","0660")+
+   blockBoard(2456,172,"1022","6019")+blockBoard(2456,322,"1020","1021")+
+   sBoard(300,202)+sBoard(300,352)+
+   '<div style="position:absolute;left:522px;top:168px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:507px;top:168px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:529px;top:170px;width:121px;height:5px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:650px;top:165px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+   '<div style="position:absolute;left:710px;top:170px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
+   signalBlock(746,148,26,sel==="E4",lampDivs(e4))+
+   sigLabel(436,220,"E4")+
+   '<div style="position:absolute;left:2056px;top:168px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:2041px;top:168px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:1930px;top:170px;width:126px;height:5px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:1868px;top:165px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+   '<div style="position:absolute;left:1832px;top:170px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
+   signalBlock(1720,148,26,sel==="E1",lampDivs(e1))+
+   sigLabel(2104,220,"E1")+
+   '<div style="position:absolute;left:522px;top:318px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:507px;top:318px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:529px;top:320px;width:121px;height:5px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:650px;top:315px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+   '<div style="position:absolute;left:710px;top:320px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
+   signalBlock(746,298,26,sel==="E2",lampDivs(e2))+
+   sigLabel(436,370,"E2")+
+   '<div style="position:absolute;left:2056px;top:318px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:2041px;top:318px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:1930px;top:320px;width:126px;height:5px;background:#111;z-index:6;"></div>'+
+   '<div style="position:absolute;left:1868px;top:315px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+   '<div style="position:absolute;left:1832px;top:320px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
+   signalBlock(1720,298,26,sel==="E3",lampDivs(e3))+
+   sigLabel(2104,370,"E3")+
+   sBoard(2264,202)+sBoard(2264,352)+
+   '<div id="simT1" style="'+t1Style+'">'+trainMarkup("T1","#2f6fd6",false)+'</div>'+
+   '<div id="simT2" style="'+t2Style+'">'+trainMarkup("T2","#c07820",true)+'</div>'+
+   stationSign("Crossover 3","100.5","#3a1d8e")+
+ '</div>';
+}
+
+/* ---------- Track Layout: Siding 4 ---------- */
+function siding4Markup(){
+ var s4=sim.aspects4;
+ var sel=curActiveSig();
+ function lamps(id,fn){return fn==="L"?lampsL(s4[id],26):lampsR(s4[id],26);}
+ var t1Style="position:absolute;left:"+Math.round(sim.t1x)+"px;top:134px;width:310px;height:62px;z-index:20;will-change:left;";
+ var t2Style="position:absolute;left:"+Math.round(sim.t2x)+"px;top:232px;width:310px;height:62px;z-index:20;will-change:left;";
+ function blockBoard(left,top,nl,nr){
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;display:flex;border:4px solid #111;border-radius:2px;overflow:hidden;width:128px;height:88px;z-index:6;">'+
+     '<div style="width:36px;background:#111;display:flex;align-items:center;justify-content:center;"><div style="writing-mode:vertical-rl;transform:rotate(180deg);color:#fff;font-weight:900;font-size:15px;font-family:\'Barlow Semi Condensed\';letter-spacing:1px;">'+nl+'</div></div>'+
+     '<div style="flex:1;background:#2268d4;display:flex;align-items:center;justify-content:center;"><svg width="44" height="60" viewBox="0 0 44 60"><polygon points="22,58 2,28 14,28 14,2 30,2 30,28 42,28" fill="#f5c400"></polygon></svg></div>'+
+     '<div style="width:36px;background:#111;display:flex;align-items:center;justify-content:center;"><div style="writing-mode:vertical-rl;transform:rotate(180deg);color:#fff;font-weight:900;font-size:15px;font-family:\'Barlow Semi Condensed\';letter-spacing:1px;">'+nr+'</div></div>'+
+   '</div>';
+ }
+ function sBoard(left,top){
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;width:32px;height:32px;border:3px solid #111;background:#fff;display:flex;align-items:center;justify-content:center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:22px;color:#111;z-index:5;">S</div>';
+ }
+ function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt){
+   var l=lamps(id,fn);
+   return '<div style="position:absolute;left:'+left+'px;top:'+(top-27)+'px;width:56px;height:14px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+     '<div style="position:absolute;left:'+(left+27)+'px;top:'+(top-13)+'px;width:4px;height:13px;background:#111;z-index:6;"></div>'+
+     signalBlock(left-10,top,12,sel===id,lampDivs(l),4)+
+     '<div style="position:absolute;left:'+labelLeft+'px;top:'+labelTop+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
+ }
+ function trackMarker(left,top){
+   return '<svg style="position:absolute;left:'+left+'px;top:'+top+'px;z-index:8;" width="36" height="36" viewBox="0 0 36 36"><polygon points="18,2 34,18 18,34 2,18" fill="#fff" stroke="#2268d4" stroke-width="3"></polygon><polygon points="18,8 28,18 18,28 8,18" fill="#2268d4"></polygon></svg>';
+ }
+ return '<div class="sim-stage-track" style="width:3400px;height:520px;transform:scale('+sim.scaleS+');">'+
+   '<div style="position:absolute;left:0;right:0;top:160px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:0;right:0;top:258px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:300px;width:780px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:1320px;width:760px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:2320px;width:780px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
+   '<svg style="position:absolute;left:0;top:0;width:3400px;height:520px;overflow:visible;pointer-events:none;z-index:3;">'+
+     '<path d="M 1340,165 C 1430,165 1430,263 1520,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 1880,263 C 1970,263 1970,165 2060,165" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 1100,263 C 1210,263 1210,361 1320,361" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 2080,361 C 2190,361 2190,263 2300,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+   '</svg>'+
+   blockBoard(16,120,"3126","3125")+blockBoard(16,218,"3125","3124")+
+   blockBoard(3236,120,"3170","3169")+blockBoard(3236,218,"3169","3168")+
+   sBoard(240,148)+sBoard(240,246)+sBoard(3078,148)+sBoard(3078,246)+
+   sigUnit(532,143,"E4","L",476,96,26)+
+   sigUnit(532,241,"E2","L",476,194,26)+
+   trackMarker(1000,343)+
+   '<div style="position:absolute;left:320px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4A</div>'+
+   sigUnit(1372,339,"S2","L",1316,292,22)+
+   sigUnit(1572,143,"X11","R",1512,97,19,"X1/1")+
+   sigUnit(1572,241,"X12","R",1512,195,19,"X1/2")+
+   sigUnit(1572,339,"X14","R",1512,395,19,"X1/4")+
+   sigUnit(1792,143,"X21","L",1864,97,19,"X2/1")+
+   sigUnit(1792,241,"X22","L",1864,195,19,"X2/2")+
+   sigUnit(1792,339,"X24","L",1864,395,19,"X2/4")+
+   sigUnit(1972,339,"S3","R",2034,292,22)+
+   trackMarker(2364,343)+
+   '<div style="position:absolute;left:2980px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
+   sigUnit(2812,143,"E1","R",2884,96,26)+
+   sigUnit(2812,241,"E3","R",2884,194,26)+
+   '<div id="simT1" style="'+t1Style+'">'+trainMarkup("T1","#2f6fd6",false)+'</div>'+
+   '<div id="simT2" style="'+t2Style+'">'+trainMarkup("T2","#c07820",true)+'</div>'+
+   stationSign("Siding 4","314.3","#5a1ec8")+
+ '</div>';
+}
+
+/* ---------- Mini DMI overlay ---------- */
+function miniDmiMarkup(){
+ var posStyle=(sim.miniDmiX!==null)?("left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;"):"top:12px;right:12px;";
+ var arrowStyle=(sim.miniDmiX!==null)?("left:"+(Math.round(sim.miniDmiX)+204)+"px;top:"+(Math.round(sim.miniDmiY)+54)+"px;"):"top:66px;right:10px;";
+ return '<div class="mini-dmi" id="miniDmi" style="'+posStyle+'">'+
+   '<div class="mini-dmi-hd"><span style="font-size:9px;font-weight:700;color:#6fb0e6;letter-spacing:.8px;">&#10495; CABIN DMI</span>'+
+   '<span style="font-size:9px;font-weight:700;color:#a3c25f;font-family:\'Barlow Semi Condensed\',sans-serif;">L'+sim.dmiLevel+' &middot; '+sim.dmiMode.toUpperCase()+'</span></div>'+
+   dmiSpeedoSvg(380,340,200,133,17)+
+ '</div>'+
+ '<div class="mini-arrowpad" id="miniArrows" style="'+arrowStyle+'">'+
+   '<div class="sim-arrowgrid">'+
+     '<div></div><button id="miniUp">&#9650;</button><div></div>'+
+     '<button id="miniLeft">&#9664;</button><div class="dotcell"><div class="dot"></div></div><button id="miniRight">&#9654;</button>'+
+     '<div></div><button id="miniDown">&#9660;</button><div></div>'+
    '</div>'+
  '</div>';
+}
+
+/* ---------- Track Layout tab ---------- */
+function trackLayoutMarkup(){
+ var isC=sim.layout==="crossover3";
+ var stageH=Math.round(520*(isC?sim.scale:sim.scaleS));
+ var h='<div style="width:100%;position:relative;">';
+ h+='<div class="sim-qbanner" id="simQBanner"'+(sim.questionText.trim().length>0?'':' style="display:none;"')+'><div class="q">?</div><div class="t" id="simQBannerText">'+esc(sim.questionText)+'</div></div>';
+ h+='<div class="sim-ltabs">'+
+     '<button class="ltab'+(isC?' on':'')+'" id="tabCrossover">Crossover 3</button>'+
+     '<button class="ltab'+(!isC?' on':'')+'" id="tabSiding">Siding 4</button>'+
+   '</div>'+
+   '<div class="sim-stage" style="height:'+stageH+'px;">'+
+     (isC?crossover3Markup():siding4Markup())+
+     miniDmiMarkup()+
+   '</div>'+
+   '<div class="sim-drivebar">'+
+     '<button class="sim-trainbtn'+(sim.activeTrain===1?' on':'')+'" id="trainBtn1" style="border-color:#2f6fd6;">Track 1 &middot; T1</button>'+
+     '<button class="sim-trainbtn'+(sim.activeTrain===2?' on':'')+'" id="trainBtn2" style="border-color:#c07820;">Track 2 &middot; T2</button>'+
+     '<button class="sim-runbtn '+(curRunning()?'stop':'go')+'" id="runBtn">'+(curRunning()?"STOP":"DRIVE")+'</button>'+
+   '</div>'+
+ '</div>';
+ return h;
+}
+function curRunning(){return sim.activeTrain===1?sim.running1:sim.running2;}
+function curActiveV(){return sim.activeTrain===1?sim.v1:sim.v2;}
+
+/* ---------- Cabin DMI tab ---------- */
+function cabinDmiMarkup(){
+ var stageH=Math.round(480*sim.dmiScale);
+ var h='<div class="sim-dmistage" style="height:'+stageH+'px;">'+
+   '<div style="width:640px;height:480px;transform:scale('+sim.dmiScale+');transform-origin:top center;position:relative;background:#0a1a31;border:2px solid #20344e;border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.6);overflow:hidden;">'+
+   '<svg viewBox="0 0 640 480" style="position:absolute;left:0;top:0;width:640px;height:480px;" font-family="Barlow,sans-serif">'+
+     dmiSpeedoSvgInner()+
+     dmiFullExtrasSvg()+
+   '</svg>'+
+   '</div>'+
+ '</div>';
+ return h;
+}
+/* same speedo content but without the outer <svg> wrapper, for embedding inside the full 640x480 viewBox */
+function dmiSpeedoSvgInner(){
+ var perm=curPermSpeed();
+ var permArc=perm<=0?"":dmiArcPath(DMI_ROUT+8,dmiSpDeg(0),dmiSpDeg(perm));
+ var kmh=curKmh();
+ var ticks=dmiTicksArr().map(function(t){
+   return '<line x1="'+t.x1+'" y1="'+t.y1+'" x2="'+t.x2+'" y2="'+t.y2+'" stroke="#e6ebf2" stroke-width="'+t.w+'"></line>';
+ }).join("");
+ var needleT="rotate("+dmiSpDeg(kmh).toFixed(1)+" "+DMI_CX+" "+DMI_CY+")";
+ var labels=[[103,251,"0"],[69,168,"50"],[103,85,"100"],[186,51,"150"],[269,85,"200"],[303,168,"250"],[269,251,"300"]]
+   .map(function(l){return '<text x="'+l[0]+'" y="'+l[1]+'" font-size="17" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#eef1f6">'+l[2]+'</text>';}).join("");
+ var modeVis={fs:"none",sr:"none",sh:"none",os:"none",un:"none"}; modeVis[sim.dmiMode]="inline";
+ var lvlVis=[sim.dmiLevel===0?"inline":"none",sim.dmiLevel===1?"inline":"none",sim.dmiLevel===2?"inline":"none"];
+ var rbcConn=sim.dmiRbc==="connected"?"inline":"none", rbcNone=sim.dmiRbc==="none"?"inline":"none";
+ return '<path d="'+permArc+'" fill="none" stroke="#8c8f94" stroke-width="16" stroke-linecap="round"></path>'+
+   ticks+labels+
+   '<polygon points="186,46 182,168 190,168" fill="#d2d6dc" transform="'+needleT+'"></polygon>'+
+   '<circle cx="186" cy="168" r="27" fill="#f4f5f7" stroke="#b9c0c9" stroke-width="1.5"></circle>'+
+   '<text x="186" y="169" fill="#0a1a31" font-size="23" font-weight="800" text-anchor="middle" dominant-baseline="central">'+kmh+'</text>'+
+   '<text x="186" y="210" fill="#8ba8c0" font-size="11" text-anchor="middle" letter-spacing="1.2">ODO</text>'+
+   '<text x="186" y="228" fill="#cdd6e2" font-size="15" font-weight="800" text-anchor="middle">'+fmtOdo(sim.odometer)+'</text>'+
+   '<rect x="296" y="272" width="40" height="34" rx="2" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
+   '<g display="'+modeVis.fs+'"><ellipse cx="316" cy="289" rx="15" ry="8" fill="none" stroke="#cdd6e2" stroke-width="1.6"></ellipse><circle cx="316" cy="289" r="4.5" fill="#cdd6e2"></circle></g>'+
+   '<g display="'+modeVis.sr+'"><ellipse cx="316" cy="289" rx="14" ry="7" fill="none" stroke="#cdd6e2" stroke-width="1.6"></ellipse><circle cx="316" cy="289" r="4" fill="#cdd6e2"></circle><line x1="303" y1="276" x2="329" y2="302" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line><line x1="329" y1="276" x2="303" y2="302" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line></g>'+
+   '<g display="'+modeVis.sh+'"><rect x="303" y="283" width="22" height="12" rx="1" fill="none" stroke="#cdd6e2" stroke-width="1.7"></rect><rect x="322" y="285" width="6" height="10" fill="none" stroke="#cdd6e2" stroke-width="1.7"></rect><circle cx="307" cy="297" r="2.2" fill="#cdd6e2"></circle><circle cx="318" cy="297" r="2.2" fill="#cdd6e2"></circle><line x1="303" y1="289" x2="297" y2="289" stroke="#cdd6e2" stroke-width="1.7"></line><polygon points="297,289 302,286.5 302,291.5" fill="#cdd6e2"></polygon><line x1="328" y1="289" x2="334" y2="289" stroke="#cdd6e2" stroke-width="1.7"></line><polygon points="334,289 329,286.5 329,291.5" fill="#cdd6e2"></polygon></g>'+
+   '<g display="'+modeVis.os+'"><polygon points="298,302 332,289 298,276" fill="none" stroke="#cdd6e2" stroke-width="1.8"></polygon><ellipse cx="326" cy="289" rx="5" ry="3.5" fill="none" stroke="#cdd6e2" stroke-width="1.4"></ellipse><circle cx="326" cy="289" r="1.8" fill="#cdd6e2"></circle></g>'+
+   '<g display="'+modeVis.un+'"><line x1="300" y1="303" x2="321" y2="274" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line><line x1="308" y1="303" x2="329" y2="274" stroke="#cdd6e2" stroke-width="2.2" stroke-linecap="round"></line><line x1="301" y1="300" x2="309" y2="300" stroke="#cdd6e2" stroke-width="1.8"></line><line x1="305" y1="293" x2="313" y2="293" stroke="#cdd6e2" stroke-width="1.8"></line><line x1="309" y1="286" x2="317" y2="286" stroke="#cdd6e2" stroke-width="1.8"></line><line x1="313" y1="279" x2="321" y2="279" stroke="#cdd6e2" stroke-width="1.8"></line></g>'+
+   '<g display="'+lvlVis[0]+'"><rect x="6" y="309" width="44" height="28" fill="none" stroke="#2c466a" stroke-width="1.5"></rect><text x="28" y="323" font-size="16" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#e6ebf2">0</text><rect x="9" y="330" width="36" height="6" fill="#cdd6e2"></rect></g>'+
+   '<g display="'+lvlVis[1]+'"><rect x="6" y="309" width="44" height="28" fill="none" stroke="#2c466a" stroke-width="1.5"></rect><text x="28" y="323" font-size="16" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#e6ebf2">1</text><rect x="9" y="330" width="36" height="6" fill="#cdd6e2"></rect></g>'+
+   '<g display="'+lvlVis[2]+'"><rect x="6" y="309" width="44" height="28" fill="none" stroke="#2c466a" stroke-width="1.5"></rect><text x="28" y="323" font-size="16" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#e6ebf2">2</text><rect x="9" y="330" width="36" height="6" fill="#cdd6e2"></rect></g>'+
+   '<g display="'+rbcConn+'"><line x1="10" y1="366" x2="10" y2="388" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="10" y1="377" x2="21" y2="377" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="40" y1="366" x2="40" y2="388" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="40" y1="377" x2="29" y2="377" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="21" y1="377" x2="29" y2="377" stroke="#cdd6e2" stroke-width="2.4"></line></g>'+
+   '<g display="'+rbcNone+'"><line x1="10" y1="366" x2="10" y2="388" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="10" y1="377" x2="21" y2="377" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="40" y1="366" x2="40" y2="388" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="40" y1="377" x2="29" y2="377" stroke="#cdd6e2" stroke-width="2.4"></line><line x1="7" y1="363" x2="43" y2="391" stroke="#ff3b30" stroke-width="2.2"></line></g>';
+}
+
+/* ---------- Settings panels (Cabin DMI tab) ---------- */
+function modeIconSvg(id){
+ var icons={
+  fs:'<rect x="1" y="1" width="40" height="34" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><ellipse cx="21" cy="18" rx="14" ry="8" fill="none" stroke="currentColor" stroke-width="2"></ellipse><circle cx="21" cy="18" r="5" fill="currentColor"></circle>',
+  sr:'<rect x="1" y="1" width="40" height="34" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><ellipse cx="21" cy="18" rx="13" ry="7" fill="none" stroke="currentColor" stroke-width="2"></ellipse><circle cx="21" cy="18" r="4" fill="currentColor"></circle><line x1="8" y1="5" x2="34" y2="31" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></line><line x1="34" y1="5" x2="8" y2="31" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></line>',
+  sh:'<rect x="1" y="1" width="40" height="34" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><rect x="7" y="14" width="22" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="2"></rect><rect x="25" y="16" width="8" height="9" fill="none" stroke="currentColor" stroke-width="2"></rect><circle cx="11" cy="27" r="3" fill="currentColor"></circle><circle cx="22" cy="27" r="3" fill="currentColor"></circle><line x1="7" y1="19" x2="2" y2="19" stroke="currentColor" stroke-width="2"></line><polygon points="2,19 7,16.5 7,21.5" fill="currentColor"></polygon><line x1="33" y1="19" x2="38" y2="19" stroke="currentColor" stroke-width="2"></line><polygon points="38,19 33,16.5 33,21.5" fill="currentColor"></polygon>',
+  un:'<rect x="1" y="1" width="40" height="34" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><line x1="8" y1="32" x2="26" y2="4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></line><line x1="16" y1="32" x2="34" y2="4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></line><line x1="9" y1="28" x2="17" y2="28" stroke="currentColor" stroke-width="2"></line><line x1="13" y1="22" x2="21" y2="22" stroke="currentColor" stroke-width="2"></line><line x1="17" y1="16" x2="25" y2="16" stroke="currentColor" stroke-width="2"></line><line x1="21" y1="10" x2="29" y2="10" stroke="currentColor" stroke-width="2"></line>',
+  os:'<rect x="1" y="1" width="40" height="34" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><polygon points="4,32 38,18 4,4" fill="none" stroke="currentColor" stroke-width="2"></polygon><ellipse cx="35" cy="18" rx="5" ry="3.5" fill="none" stroke="currentColor" stroke-width="1.6"></ellipse><circle cx="35" cy="18" r="2" fill="currentColor"></circle>'
+ };
+ return '<svg viewBox="0 0 42 36" width="34" height="29">'+(icons[id]||"")+'</svg>';
+}
+function levelIconSvg(n){
+ return '<svg viewBox="0 0 42 38" width="32" height="29"><rect x="2" y="2" width="38" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect><text x="21" y="21" font-size="16" font-weight="800" text-anchor="middle" fill="currentColor" font-family="sans-serif">'+n+'</text><rect x="5" y="28" width="32" height="6" fill="currentColor"></rect></svg>';
+}
+function rbcIconSvg(connected){
+ var slash=connected?"":'<line x1="2" y1="2" x2="52" y2="28" stroke="#ff3b30" stroke-width="2.5"></line>';
+ return '<svg viewBox="0 0 54 30" width="44" height="24"><line x1="4" y1="4" x2="4" y2="26" stroke="currentColor" stroke-width="3"></line><line x1="4" y1="15" x2="18" y2="15" stroke="currentColor" stroke-width="3"></line><line x1="50" y1="4" x2="50" y2="26" stroke="currentColor" stroke-width="3"></line><line x1="50" y1="15" x2="36" y2="15" stroke="currentColor" stroke-width="3"></line>'+(connected?'<line x1="18" y1="15" x2="36" y2="15" stroke="currentColor" stroke-width="3"></line>':"")+slash+'</svg>';
+}
+function settingsPanelsMarkup(){
+ var perm=curPermSpeed();
+ var settingsBody="";
+ if(sim.settingsOpen){
+   settingsBody=
+     '<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;color:#c4ccd5;">Speed</span>'+
+       '<input type="range" min="0" max="300" value="'+sim.dmiSpeed+'" id="dmiSpeedSlider" class="sim-range" style="accent-color:#6fb0e6;flex:1;">'+
+       '<span style="font-size:15px;font-weight:800;color:#e6ebf2;min-width:62px;text-align:right;font-family:\'Barlow Semi Condensed\';">'+sim.dmiSpeed+' km/h</span></div>'+
+     '<div style="display:flex;flex-direction:column;gap:6px;">'+
+       '<div style="display:flex;justify-content:space-between;align-items:center;">'+
+         '<div class="sim-sec-lbl">BRAKING CURVE (permitted speed)</div>'+
+         '<button class="sim-settbtn'+(sim.dmiPermManual===null?' on':'')+'" id="dmiPermAutoBtn" style="'+(sim.dmiPermManual===null?'background:#1d2a3a;border-color:#6fb0e6;color:#cfe6fb;':"")+'">Auto</button>'+
+       '</div>'+
+       '<div style="display:flex;align-items:center;gap:10px;">'+
+         '<input type="range" min="0" max="300" value="'+perm+'" id="dmiPermSlider" class="sim-range" style="accent-color:#8c8f94;flex:1;">'+
+         '<span style="font-size:14px;font-weight:800;color:#cdd6e2;min-width:58px;text-align:right;font-family:\'Barlow Semi Condensed\';">'+perm+' km/h</span>'+
+       '</div>'+
+     '</div>'+
+     '<div style="display:flex;flex-direction:column;gap:5px;"><div class="sim-sec-lbl">ETCS LEVEL</div><div style="display:flex;gap:6px;">'+
+       [0,1,2].map(function(n){
+         var on=sim.dmiLevel===n;
+         return '<button class="sim-iconbtn'+(on?' on':'')+'" data-lvl="'+n+'">'+levelIconSvg(n)+'<span>Level '+n+'</span></button>';
+       }).join("")+
+     '</div></div>'+
+     '<div style="display:flex;flex-direction:column;gap:5px;"><div class="sim-sec-lbl">RBC CONNECTION</div><div style="display:flex;gap:6px;">'+
+       '<button class="sim-iconbtn'+(sim.dmiRbc==="connected"?' on':'')+'" data-rbc="connected">'+rbcIconSvg(true)+'<span>RBC On</span></button>'+
+       '<button class="sim-iconbtn'+(sim.dmiRbc==="none"?' on':'')+'" data-rbc="none">'+rbcIconSvg(false)+'<span>No RBC</span></button>'+
+     '</div></div>'+
+     '<div style="display:flex;flex-direction:column;gap:5px;"><div class="sim-sec-lbl">DRIVING MODE</div><div style="display:flex;gap:6px;flex-wrap:wrap;">'+
+       MODES.map(function(m){
+         var on=sim.dmiMode===m.id;
+         return '<button class="sim-iconbtn'+(on?' on':'')+'" data-mode="'+m.id+'">'+modeIconSvg(m.id)+'<span>'+m.label+'</span></button>';
+       }).join("")+
+     '</div></div>';
+ }
+ var dmiPanel='<div class="sim-panel">'+
+   '<div style="display:flex;align-items:center;justify-content:space-between;"><div class="sim-panel-lbl">DMI DISPLAY</div>'+
+   '<button class="sim-settbtn" id="toggleSettingsBtn"><span>Settings</span><span>'+(sim.settingsOpen?"&#9650;":"&#9660;")+'</span></button></div>'+
+   settingsBody+
+ '</div>';
+
+ if(!sim.settingsOpen){
+   return dmiPanel;
+ }
+
+ var curSig=curActiveSig();
+ var sigBtnsHtml=curSigDefs().map(function(def){
+   var lampObj=def.fn==="L"?lampsL(curAspects()[def.id],12):lampsR(curAspects()[def.id],12);
+   var on=curSig===def.id;
+   return '<button class="sim-sigbtn'+(on?' on':'')+'" data-sig="'+def.id+'">'+
+     '<div class="sim-lamprow">'+lampDivs(lampObj)+'</div>'+(def.label||def.id)+'</button>';
+ }).join("");
+ var sigPanel='<div class="sim-panel" style="min-width:180px;">'+
+   '<div class="sim-panel-lbl">CONTROL SIGNAL</div>'+
+   '<div class="sim-grid2">'+sigBtnsHtml+'</div>'+
+ '</div>';
+
+ var curAsp=curAspects()[curSig];
+ var isSigL=sigDefById(curSig).fn==="L";
+ var aspBtnsHtml=ASPECT_DEFS.map(function(def){
+   var id=def[0],label=def[1];
+   var lampObj=isSigL?lampsL(id,12):lampsR(id,12);
+   var on=curAsp===id;
+   return '<button class="sim-aspbtn'+(on?' on':'')+'" data-asp="'+id+'">'+
+     '<div class="sim-lamprow">'+lampDivs(lampObj)+'</div><span class="sim-asplabel">'+esc(label)+'</span></button>';
+ }).join("");
+ var aspPanel='<div class="sim-panel" style="flex:2;min-width:300px;">'+
+   '<div class="sim-panel-lbl">ASPECT FOR <span style="color:#f0e8b0;font-style:italic;font-size:13px;">'+esc(curSig)+'</span></div>'+
+   '<div class="sim-grid3">'+aspBtnsHtml+'</div>'+
+ '</div>';
+
+ var trainPanel='<div class="sim-panel" style="min-width:220px;">'+
+   '<div class="sim-panel-lbl">ACTIVE TRAIN</div>'+
+   '<div style="display:flex;gap:8px;">'+
+     '<button class="sim-trainbtn'+(sim.activeTrain===1?' on':'')+'" id="trainBtn1b" style="border-color:#2f6fd6;">Track 1 &middot; T1</button>'+
+     '<button class="sim-trainbtn'+(sim.activeTrain===2?' on':'')+'" id="trainBtn2b" style="border-color:#c07820;">Track 2 &middot; T2</button>'+
+   '</div>'+
+   '<div style="display:flex;gap:8px;align-items:center;">'+
+     '<button class="sim-runbtn '+(curRunning()?'stop':'go')+'" id="runBtnB">'+(curRunning()?"STOP":"DRIVE")+'</button>'+
+     '<input type="range" min="0" max="100" value="'+Math.round(sim.throttle*100)+'" id="throttleSlider" class="sim-range" style="accent-color:#3ea537;">'+
+     '<button class="sim-resetbtn" id="resetBtn">Reset</button>'+
+   '</div>'+
+   '<div style="font-size:11px;color:#7c8794;line-height:1.4;">Practical &mdash; read aspects and drive as on the line.</div>'+
+ '</div>';
+
+ var qPanel='<div class="sim-panel" style="min-width:240px;">'+
+   '<div class="sim-panel-lbl">QUESTION DISPLAY</div>'+
+   '<textarea class="sim-qta" id="questionTa" placeholder="Type a question here &mdash; it will appear as a banner above the track layout&hellip;">'+esc(sim.questionText)+'</textarea>'+
+   '<div style="display:flex;gap:6px;"><button class="sim-clearbtn" id="clearQBtn">Clear</button></div>'+
+ '</div>';
+
+ return dmiPanel+sigPanel+aspPanel+trainPanel+qPanel;
+}
+
+/* ---------- top-level render ---------- */
+function fitSimScale(){
+ var appEl=document.querySelector(".app");
+ var baseW=appEl?appEl.clientWidth:window.innerWidth;
+ var w=Math.max(280,baseW-16);
+ sim.scale=w/2600;
+ sim.scaleS=w/3400;
+ sim.dmiScale=w/640;
+}
+function renderSimulator(){
+ fitSimScale();
+ var activeV=curActiveV();
+ var speedKmh=Math.round(activeV/MAX_SPEED*300);
+ var label=sim.activeTrain===1?"TRACK 1 &middot; T1":"TRACK 2 &middot; T2";
+ var h='<button class="back" id="back">&#8592; Categories</button><div class="simwrap">'+
+   '<div class="sim-head">'+
+     '<div><div class="sim-title">E1 Signal Trainer</div><div class="sim-sub">Crossover 3 &middot; Km 100.5 &middot; HSR Makkah&ndash;Madinah</div></div>'+
+     '<div class="sim-speed"><div class="l">'+label+'</div><div class="v">'+speedKmh+'<span> km/h</span></div></div>'+
+   '</div>'+
+   '<div class="sim-tabs">'+
+     '<button class="simtab'+(sim.view==="track"?' on':'')+'" id="viewTrack">Track Layout</button>'+
+     '<button class="simtab'+(sim.view==="dmi"?' on':'')+'" id="viewDmi">Cabin &middot; Driver DMI</button>'+
+   '</div>'+
+   (sim.view==="track"?trackLayoutMarkup():'<div>'+cabinDmiMarkup()+'<div class="sim-panels">'+settingsPanelsMarkup()+'</div></div>')+
+ '</div>';
  app.innerHTML=h;
- document.getElementById("back").onclick=function(){
-  if(sim.raf)cancelAnimationFrame(sim.raf);sim.lastT=null;
-  view="home";window.scrollTo(0,0);render();
+ wireSimulator();
+}
+function wireSimulator(){
+ var back=document.getElementById("back");
+ if(back)back.onclick=function(){
+   if(sim.raf)cancelAnimationFrame(sim.raf);sim.lastT=null;
+   view="home";window.scrollTo(0,0);render();
  };
- renderLevelBtns();renderRbcBtns();renderModeBtns();renderAspectBtns();renderSigBox();
- document.getElementById("throttle").oninput=function(e){
+ var vt=document.getElementById("viewTrack"); if(vt)vt.onclick=function(){sim.view="track";renderSimulator();};
+ var vd=document.getElementById("viewDmi"); if(vd)vd.onclick=function(){sim.view="dmi";renderSimulator();};
+
+ var tc=document.getElementById("tabCrossover"); if(tc)tc.onclick=function(){sim.layout="crossover3";renderSimulator();};
+ var ts=document.getElementById("tabSiding"); if(ts)ts.onclick=function(){sim.layout="siding4";renderSimulator();};
+
+ ["trainBtn1","trainBtn1b"].forEach(function(id){var b=document.getElementById(id);if(b)b.onclick=function(){sim.activeTrain=1;renderSimulator();};});
+ ["trainBtn2","trainBtn2b"].forEach(function(id){var b=document.getElementById(id);if(b)b.onclick=function(){sim.activeTrain=2;renderSimulator();};});
+ ["runBtn","runBtnB"].forEach(function(id){var b=document.getElementById(id);if(b)b.onclick=function(){
+   if(sim.activeTrain===1)sim.running1=!sim.running1; else sim.running2=!sim.running2;
+   renderSimulator();
+ };});
+
+ document.querySelectorAll(".sim-sigbtn[data-sig]").forEach(function(b){
+   b.onclick=function(){setActiveSig(this.getAttribute("data-sig"));};
+ });
+ document.querySelectorAll(".sim-aspbtn[data-asp]").forEach(function(b){
+   b.onclick=function(){setAspectForActiveSig(this.getAttribute("data-asp"));};
+ });
+
+ var resetBtn=document.getElementById("resetBtn");
+ if(resetBtn)resetBtn.onclick=function(){
+   sim.t1x=2250;sim.v1=0;sim.running1=false;
+   sim.t2x=-320;sim.v2=0;sim.running2=false;
+   sim.displayV=0;sim.dispKmh=0;sim.odometer=0;
+   renderSimulator();
+ };
+
+ var throttle=document.getElementById("throttleSlider");
+ if(throttle)throttle.oninput=function(e){
    sim.throttle=Number(e.target.value)/100;
-   document.querySelector(".simpanel .pl:nth-of-type(4)").textContent="Throttle ("+Math.round(sim.throttle*100)+"%)";
+   var lbl=document.getElementById("runBtnB");
  };
- document.getElementById("drivebtn").onclick=function(){
-   sim.running=!sim.running;
-   this.textContent=sim.running?"STOP":"DRIVE";
-   this.className="drivebtn "+(sim.running?"running":"stopped");
+
+ var toggleSettings=document.getElementById("toggleSettingsBtn");
+ if(toggleSettings)toggleSettings.onclick=function(){sim.settingsOpen=!sim.settingsOpen;renderSimulator();};
+
+ var dmiSpeedSlider=document.getElementById("dmiSpeedSlider");
+ if(dmiSpeedSlider)dmiSpeedSlider.oninput=function(e){
+   sim.dmiSpeed=Number(e.target.value);sim.dmiSpeedManual=true;renderSimulator();
  };
- document.getElementById("resetbtn").onclick=function(){
-   sim.v=0;sim.displayV=0;sim.dispKmh=0;sim.odometer=0;sim.trainPos=0.08;sim.running=false;
-   simulator();
+ var dmiPermSlider=document.getElementById("dmiPermSlider");
+ if(dmiPermSlider)dmiPermSlider.onchange=function(e){
+   sim.dmiPermManual=Number(e.target.value);renderSimulator();
  };
+ var dmiPermAutoBtn=document.getElementById("dmiPermAutoBtn");
+ if(dmiPermAutoBtn)dmiPermAutoBtn.onclick=function(){sim.dmiPermManual=null;renderSimulator();};
+
+ document.querySelectorAll(".sim-iconbtn[data-lvl]").forEach(function(b){
+   b.onclick=function(){sim.dmiLevel=Number(this.getAttribute("data-lvl"));renderSimulator();};
+ });
+ document.querySelectorAll(".sim-iconbtn[data-rbc]").forEach(function(b){
+   b.onclick=function(){sim.dmiRbc=this.getAttribute("data-rbc");renderSimulator();};
+ });
+ document.querySelectorAll(".sim-iconbtn[data-mode]").forEach(function(b){
+   b.onclick=function(){
+     sim.dmiMode=this.getAttribute("data-mode");
+     if(sim.dmiMode==="un")sim.dmiLevel=0;
+     renderSimulator();
+   };
+ });
+
+ var qTa=document.getElementById("questionTa");
+ if(qTa)qTa.oninput=function(e){
+   sim.questionText=e.target.value;
+   var qb=document.getElementById("simQBanner");
+   var qt=document.getElementById("simQBannerText");
+   if(qb&&qt){
+     qt.textContent=sim.questionText;
+     qb.style.display=sim.questionText.trim().length>0?"":"none";
+   }
+ };
+ var clearQ=document.getElementById("clearQBtn");
+ if(clearQ)clearQ.onclick=function(){sim.questionText="";renderSimulator();};
+
+ var miniDmi=document.getElementById("miniDmi");
+ if(miniDmi)wireMiniDmiDrag(miniDmi);
+ var mu=document.getElementById("miniUp"); if(mu)mu.onclick=function(){
+   sim.miniDmiY=Math.max(0,(sim.miniDmiY!==null?sim.miniDmiY:12)-20);
+   if(sim.miniDmiX===null)sim.miniDmiX=window.innerWidth-230;
+   renderSimulator();
+ };
+ var md=document.getElementById("miniDown"); if(md)md.onclick=function(){
+   sim.miniDmiY=(sim.miniDmiY!==null?sim.miniDmiY:12)+20;
+   if(sim.miniDmiX===null)sim.miniDmiX=window.innerWidth-230;
+   renderSimulator();
+ };
+ var ml=document.getElementById("miniLeft"); if(ml)ml.onclick=function(){
+   sim.miniDmiX=Math.max(0,(sim.miniDmiX!==null?sim.miniDmiX:(window.innerWidth-230))-20);
+   if(sim.miniDmiY===null)sim.miniDmiY=12;
+   renderSimulator();
+ };
+ var mr=document.getElementById("miniRight"); if(mr)mr.onclick=function(){
+   sim.miniDmiX=(sim.miniDmiX!==null?sim.miniDmiX:(window.innerWidth-230))+20;
+   if(sim.miniDmiY===null)sim.miniDmiY=12;
+   renderSimulator();
+ };
+
+ if(!sim._resizeBound){
+   sim._resizeBound=true;
+   window.addEventListener("resize",function(){
+     if(view!=="simulator")return;
+     renderSimulator();
+   });
+ }
  startSimLoop();
 }
-function renderLevelBtns(){
- var box=document.getElementById("levelbtns");if(!box)return;
- var h="";
- [0,1,2].forEach(function(l){h+='<button class="sbtn'+(sim.level===l?' on':'')+'" data-l="'+l+'">Level '+l+'</button>';});
- box.innerHTML=h;
- box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
-   sim.level=Number(this.getAttribute("data-l"));
-   if(sim.mode==="un")sim.level=0;
-   simulator();
- };});
-}
-function renderRbcBtns(){
- var box=document.getElementById("rbcbtns");if(!box)return;
- var h='<button class="sbtn'+(sim.rbc==="connected"?' on':'')+'" data-r="connected">RBC On</button>'+
-       '<button class="sbtn'+(sim.rbc==="none"?' on':'')+'" data-r="none">No RBC</button>';
- box.innerHTML=h;
- box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
-   sim.rbc=this.getAttribute("data-r");simulator();
- };});
-}
-function renderModeBtns(){
- var box=document.getElementById("modebtns");if(!box)return;
- var h="";
- MODES.forEach(function(m){h+='<button class="sbtn'+(sim.mode===m.id?' on':'')+'" data-m="'+m.id+'">'+m.label+'</button>';});
- box.innerHTML=h;
- box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
-   sim.mode=this.getAttribute("data-m");
-   if(sim.mode==="un")sim.level=0;
-   simulator();
- };});
-}
-function renderAspectBtns(){
- var box=document.getElementById("aspectbtns");if(!box)return;
- var h="";
- ASPECTS.forEach(function(a){
-   h+='<button class="sbtn'+(sim.aspect===a.id?' on gold':'')+'" data-a="'+a.id+'" style="display:flex;align-items:center;gap:6px;">'+
-     '<span style="display:flex;gap:2px;">'+
-       a.lamps.map(function(l){return '<span style="width:7px;height:7px;border-radius:50%;display:inline-block;background:'+(LAMP_COLOR[l]||"#1a1a1a")+'"></span>';}).join("")+
-     '</span>'+esc(a.label)+'</button>';
+function wireMiniDmiDrag(el){
+ var dragging=false,startX=0,startY=0,baseX=0,baseY=0;
+ function getPos(){
+   var rect=el.parentElement.getBoundingClientRect();
+   var r=el.getBoundingClientRect();
+   return {x:r.left-rect.left, y:r.top-rect.top};
+ }
+ el.addEventListener("pointerdown",function(e){
+   dragging=true;
+   startX=e.clientX;startY=e.clientY;
+   var p=getPos();baseX=p.x;baseY=p.y;
+   el.setPointerCapture&&el.setPointerCapture(e.pointerId);
  });
- box.innerHTML=h;
- box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
-   sim.aspect=this.getAttribute("data-a");simulator();
- };});
+ el.addEventListener("pointermove",function(e){
+   if(!dragging)return;
+   sim.miniDmiX=Math.max(0,baseX+(e.clientX-startX));
+   sim.miniDmiY=Math.max(0,baseY+(e.clientY-startY));
+   el.style.left=Math.round(sim.miniDmiX)+"px";
+   el.style.top=Math.round(sim.miniDmiY)+"px";
+   el.style.right="auto";
+   var arrows=document.getElementById("miniArrows");
+   if(arrows){
+     arrows.style.left=(Math.round(sim.miniDmiX)+204)+"px";
+     arrows.style.top=(Math.round(sim.miniDmiY)+54)+"px";
+     arrows.style.right="auto";
+   }
+ });
+ function end(){dragging=false;}
+ el.addEventListener("pointerup",end);
+ el.addEventListener("pointercancel",end);
 }
-function renderSigBox(){
- var box=document.getElementById("sigbox");if(!box)return;
- var a=aspectById(sim.aspect);
- box.innerHTML=a.lamps.map(function(l){return lampSvg(l,sim.flashOn);}).join("");
-}
+
+/* ---------- rAF physics loop ---------- */
 function startSimLoop(){
  if(sim.raf)cancelAnimationFrame(sim.raf);
  sim.lastT=null;
  function frame(t){
-   if(view!=="simulator")return;
+   if(view!=="simulator"){return;}
    if(sim.lastT===null)sim.lastT=t;
-   var dt=Math.min(0.05,(t-sim.lastT)/1000);
+   var dt=Math.min((t-sim.lastT)/1000,0.05);
    sim.lastT=t;
-   var perm=permSpeed();
-   var overspeed=sim.dispKmh>perm+5;
-   var target=(sim.running&&!overspeed)?sim.throttle*MAX_SPEED:0;
-   if(sim.v<target)sim.v=Math.min(target,sim.v+ACCEL*dt);
-   else sim.v=Math.max(target,sim.v-DECEL*dt);
-   sim.displayV+=(sim.v-sim.displayV)*Math.min(1,dt*14);
-   sim.dispKmh=Math.floor(sim.displayV/MAX_SPEED*300);
-   sim.odometer+=sim.v*dt*0.15;
-   sim.trainPos+=(sim.v/MAX_SPEED)*dt*0.12;
-   if(sim.trainPos>0.86){sim.trainPos=0.08;sim.odometer=0;}
-   sim.flashT+=dt;
-   if(sim.flashT>0.5){sim.flashT=0;sim.flashOn=!sim.flashOn;renderSigBox();}
+   var MAX=MAX_SPEED,A=ACCEL,D=DECEL;
+   var b1=sim.running1?sim.throttle*MAX:0;
+   sim.v1=sim.v1<b1?Math.min(b1,sim.v1+A*dt):Math.max(b1,sim.v1-D*dt);
+   sim.t1x-=sim.v1*dt;
+   if(sim.t1x<-320)sim.t1x=2600;
+   var b2=sim.running2?sim.throttle*MAX:0;
+   sim.v2=sim.v2<b2?Math.min(b2,sim.v2+A*dt):Math.max(b2,sim.v2-D*dt);
+   sim.t2x+=sim.v2*dt;
+   if(sim.t2x>2600)sim.t2x=-320;
+   var targetV=sim.activeTrain===1?sim.v1:sim.v2;
+   sim.displayV+=(targetV-sim.displayV)*Math.min(1,dt*14);
+   var newKmh=Math.max(0,Math.min(300,Math.floor(sim.displayV/MAX*300)));
+   sim.odometer+=targetV*dt*0.15;
 
-   var needle=document.getElementById("needle");
-   if(needle)needle.innerHTML=needleEl();
-   var ds=document.getElementById("dspeed");
-   if(ds)ds.textContent=Math.max(0,sim.dispKmh);
-   var od=document.getElementById("dodo");
-   if(od)od.textContent=fmtOdo(sim.odometer);
-   var tr=document.getElementById("simtrain");
-   if(tr)tr.style.left=(sim.trainPos*100)+"%";
-   var ov=document.getElementById("overspeed");
-   if(ov)ov.className="overspeed"+(overspeed?" show":"");
+   var t1el=document.getElementById("simT1");
+   if(t1el)t1el.style.left=Math.round(sim.t1x)+"px";
+   var t2el=document.getElementById("simT2");
+   if(t2el)t2el.style.left=Math.round(sim.t2x)+"px";
+
+   var kmhChanged=(newKmh!==sim.dispKmh);
+   sim.dispKmh=newKmh;
+   if(kmhChanged && !sim.dmiSpeedManual){
+     updateDmiNeedleDom();
+   }
+   updateOdoDom();
+   updateSpeedHeaderDom();
 
    sim.raf=requestAnimationFrame(frame);
  }
  sim.raf=requestAnimationFrame(frame);
 }
+/* lightweight DOM patch helpers so the rAF loop doesn't do a full innerHTML re-render every frame */
+function updateDmiNeedleDom(){
+ var kmh=curKmh();
+ var needleT="rotate("+dmiSpDeg(kmh).toFixed(1)+" "+DMI_CX+" "+DMI_CY+")";
+ document.querySelectorAll("svg polygon[points='186,46 182,168 190,168']").forEach(function(p){
+   p.setAttribute("transform",needleT);
+ });
+ document.querySelectorAll("svg text").forEach(function(t){
+   if(t.getAttribute("x")==="186" && t.getAttribute("y")==="169"){t.textContent=kmh;}
+ });
+}
+function updateOdoDom(){
+ var txt=fmtOdo(sim.odometer);
+ document.querySelectorAll("svg text").forEach(function(t){
+   if(t.getAttribute("x")==="186" && t.getAttribute("y")==="228"){t.textContent=txt;}
+ });
+}
+function updateSpeedHeaderDom(){
+ var activeV=curActiveV();
+ var speedKmh=Math.round(activeV/MAX_SPEED*300);
+ var el=document.querySelector(".sim-speed .v");
+ if(el)el.innerHTML=speedKmh+'<span> km/h</span>';
+}
+/* simulator() kept as the entry point used by render()'s dispatch table */
+function simulator(){
+ renderSimulator();
+}
 
 render();
 </script>
-</body>
-</html>
+</body></html>
