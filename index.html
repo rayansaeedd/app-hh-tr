@@ -90,8 +90,8 @@
   .sim-ltabs{display:flex;gap:0;margin-bottom:-1px;padding:0 4px;}
   .ltab{padding:5px 12px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid #2a323d;border-bottom:none;background:#e8e8e8;color:#666;}
   .ltab.on{background:#fff;color:#111;}
-  .sim-stage{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;position:relative;}
-  .sim-stage-track{transform-origin:top left;position:relative;background:#fff;border:2px solid #bbb;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .sim-stage{width:100%;overflow:hidden;position:relative;padding-top:30px;box-sizing:border-box;}
+  .sim-stage-track{transform-origin:top left;position:relative;background:#fff;border:2px solid #bbb;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);flex-shrink:0;}
   .sim-drivebar{padding:6px 4px;display:flex;gap:6px;align-items:center;width:100%;}
   .sim-runbtn{flex:0 0 auto;padding:11px 14px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;border:none;color:#fff;white-space:nowrap;}
   .sim-runbtn.go{background:#3ea537;}
@@ -989,7 +989,7 @@ function miniDmiMarkup(){
 /* ---------- Track Layout tab ---------- */
 function trackLayoutMarkup(){
  var isC=sim.layout==="crossover3";
- var stageH=Math.round(520*(isC?sim.scale:sim.scaleS));
+ var stageH=Math.round(520*(isC?sim.scale:sim.scaleS))+60;
  var h='<div style="width:100%;position:relative;">';
  h+='<div class="sim-qbanner" id="simQBanner"'+(sim.questionText.trim().length>0?'':' style="display:none;"')+'><div class="q">?</div><div class="t" id="simQBannerText">'+esc(sim.questionText)+'</div></div>';
  h+='<div class="sim-ltabs">'+
@@ -1175,9 +1175,8 @@ function fitSimScale(){
  var appEl=document.querySelector(".app");
  var baseW=appEl?appEl.clientWidth:window.innerWidth;
  var w=Math.max(280,baseW-16);
- var trackW=w*1.35;
- sim.scale=trackW/2600;
- sim.scaleS=trackW/3400;
+ sim.scale=w/2600;
+ sim.scaleS=w/3400;
  sim.dmiScale=w/640;
 }
 function renderSimulator(){
