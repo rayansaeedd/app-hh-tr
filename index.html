@@ -884,14 +884,14 @@ function siding4Markup(){
  function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt){
    var l=lamps(id,fn);
    var headLeft=left-10;
-   var headW=65, headH=42;
-   var centerX=headLeft+headW/2;
-   var postW=4, postH=8;
+   var headW=126, headH=56;
+   var postLeft=headLeft+headW+16;
+   var postW=10, postH=22;
    var postTop=top+headH;
-   return '<div style="position:absolute;left:'+(centerX-postW/2)+'px;top:'+postTop+'px;width:'+postW+'px;height:'+postH+'px;background:#111;z-index:6;"></div>'+
-     '<div style="position:absolute;left:'+(centerX-12)+'px;top:'+(postTop+postH)+'px;width:24px;height:4px;background:#111;z-index:6;"></div>'+
+   return '<div style="position:absolute;left:'+postLeft+'px;top:'+postTop+'px;width:'+postW+'px;height:'+postH+'px;background:#111;z-index:9;"></div>'+
+     '<div style="position:absolute;left:'+(postLeft-14)+'px;top:'+(postTop+postH)+'px;width:38px;height:6px;background:#111;z-index:9;"></div>'+
      signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
-     '<div style="position:absolute;left:'+centerX+'px;top:'+(top-2)+'px;line-height:1;transform:translate(-50%,-100%);font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
+     '<div style="position:absolute;left:'+(headLeft-26)+'px;top:'+(top+headH/2-2)+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
  function trackMarker(left,top){
    return '<svg style="position:absolute;left:'+left+'px;top:'+top+'px;z-index:8;" width="36" height="36" viewBox="0 0 36 36"><polygon points="18,2 34,18 18,34 2,18" fill="#fff" stroke="#2268d4" stroke-width="3"></polygon><polygon points="18,8 28,18 18,28 8,18" fill="#2268d4"></polygon></svg>';
