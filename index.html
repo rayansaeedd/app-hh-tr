@@ -883,18 +883,15 @@ function siding4Markup(){
  }
  function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt){
    var l=lamps(id,fn);
-   var dir=fn==="R"?1:-1;
    var headLeft=left-10;
-   var capLeft=dir>0?headLeft+44:headLeft-44;
-   var beamLeft=dir>0?headLeft+14:capLeft+18;
-   var beamWidth=Math.abs(capLeft-(headLeft+12));
-   var boardLeft=dir>0?capLeft-14:capLeft-4;
-   return '<div style="position:absolute;left:'+capLeft+'px;top:'+(top-22)+'px;width:3px;height:18px;background:#111;z-index:6;"></div>'+
-     '<div style="position:absolute;left:'+(capLeft-6)+'px;top:'+(top-22)+'px;width:15px;height:3px;background:#111;z-index:6;"></div>'+
-     '<div style="position:absolute;left:'+beamLeft+'px;top:'+(top-12)+'px;width:'+beamWidth+'px;height:2px;background:#111;z-index:6;"></div>'+
-     '<div style="position:absolute;left:'+boardLeft+'px;top:'+(top-19)+'px;width:22px;height:6px;background:#fff;border:2px solid #111;z-index:7;"></div>'+
+   var headW=65, headH=42;
+   var centerX=headLeft+headW/2;
+   var postW=4, postH=8;
+   var postTop=top+headH;
+   return '<div style="position:absolute;left:'+(centerX-postW/2)+'px;top:'+postTop+'px;width:'+postW+'px;height:'+postH+'px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+(centerX-12)+'px;top:'+(postTop+postH)+'px;width:24px;height:4px;background:#111;z-index:6;"></div>'+
      signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
-     '<div style="position:absolute;left:'+labelLeft+'px;top:'+labelTop+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
+     '<div style="position:absolute;left:'+centerX+'px;top:'+(top-2)+'px;line-height:1;transform:translate(-50%,-100%);font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
  function trackMarker(left,top){
    return '<svg style="position:absolute;left:'+left+'px;top:'+top+'px;z-index:8;" width="36" height="36" viewBox="0 0 36 36"><polygon points="18,2 34,18 18,34 2,18" fill="#fff" stroke="#2268d4" stroke-width="3"></polygon><polygon points="18,8 28,18 18,28 8,18" fill="#2268d4"></polygon></svg>';
@@ -941,14 +938,14 @@ function siding4Markup(){
    fullPostSignal(532,194,"E2","L")+
    trackMarker(1000,343)+
    '<div style="position:absolute;left:320px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4A</div>'+
-   sigUnit(1372,280,"S2","L",1316,233,22)+
-   sigUnit(1572,84,"X11","R",1512,38,19,"X1/1")+
-   sigUnit(1572,182,"X12","R",1512,136,19,"X1/2")+
-   sigUnit(1572,280,"X14","R",1512,336,19,"X1/4")+
-   sigUnit(1792,84,"X21","L",1864,38,19,"X2/1")+
-   sigUnit(1792,182,"X22","L",1864,136,19,"X2/2")+
-   sigUnit(1792,280,"X24","L",1864,336,19,"X2/4")+
-   sigUnit(1972,280,"S3","R",2034,233,22)+
+   sigUnit(1372,280,"S2","L",1316,233,17)+
+   sigUnit(1572,84,"X11","R",1512,38,16,"X1/1")+
+   sigUnit(1572,182,"X12","R",1512,136,16,"X1/2")+
+   sigUnit(1572,280,"X14","R",1512,336,16,"X1/4")+
+   sigUnit(1792,84,"X21","L",1864,38,16,"X2/1")+
+   sigUnit(1792,182,"X22","L",1864,136,16,"X2/2")+
+   sigUnit(1792,280,"X24","L",1864,336,16,"X2/4")+
+   sigUnit(1972,280,"S3","R",2034,233,17)+
    trackMarker(2364,343)+
    '<div style="position:absolute;left:2980px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
    fullPostSignal(2812,96,"E1","R")+
