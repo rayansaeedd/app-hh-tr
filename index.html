@@ -881,12 +881,13 @@ function siding4Markup(){
  function sBoard(left,top){
    return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;width:32px;height:32px;border:3px solid #111;background:#fff;display:flex;align-items:center;justify-content:center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:22px;color:#111;z-index:5;">S</div>';
  }
- function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt,tagRight){
+ function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt,tagRight,tagRot180){
    var l=lamps(id,fn);
    var headLeft=left-10;
    var headW=126, headH=56;
    var labelX=tagRight?(headLeft+headW+26):(headLeft-26);
    var labelRot=tagRight?90:-90;
+   if(tagRot180) labelRot+=180;
    return signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
      '<div style="position:absolute;left:'+labelX+'px;top:'+(top+headH/2-2)+'px;transform:rotate('+labelRot+'deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
@@ -940,7 +941,7 @@ function siding4Markup(){
    sigUnit(1572,182,"X12","R",1512,136,16,"X1/2")+
    sigUnit(1572,280,"X14","R",1512,336,16,"X1/4")+
    sigUnit(1792,84,"X21","L",1864,38,16,"X2/1",true)+
-   sigUnit(1792,182,"X22","L",1864,136,16,"X2/2")+
+   sigUnit(1792,182,"X22","L",1864,136,16,"X2/2",false,true)+
    sigUnit(1792,280,"X24","L",1864,336,16,"X2/4",true)+
    sigUnit(2390,280,"S3","R",2452,233,17)+
    trackMarker(2950,343)+
