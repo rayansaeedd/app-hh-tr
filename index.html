@@ -882,9 +882,17 @@ function siding4Markup(){
  }
  function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt){
    var l=lamps(id,fn);
-   return '<div style="position:absolute;left:'+left+'px;top:'+(top-27)+'px;width:56px;height:14px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
-     '<div style="position:absolute;left:'+(left+27)+'px;top:'+(top-13)+'px;width:4px;height:13px;background:#111;z-index:6;"></div>'+
-     signalBlock(left-10,top,12,sel===id,lampDivs(l),4)+
+   var dir=fn==="R"?1:-1;
+   var headLeft=left-10;
+   var capLeft=dir>0?headLeft+44:headLeft-44;
+   var beamLeft=dir>0?headLeft+14:capLeft+18;
+   var beamWidth=Math.abs(capLeft-(headLeft+12));
+   var boardLeft=dir>0?capLeft-14:capLeft-4;
+   return '<div style="position:absolute;left:'+capLeft+'px;top:'+(top-22)+'px;width:3px;height:18px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+(capLeft-6)+'px;top:'+(top-22)+'px;width:15px;height:3px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+beamLeft+'px;top:'+(top-12)+'px;width:'+beamWidth+'px;height:2px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+boardLeft+'px;top:'+(top-19)+'px;width:22px;height:6px;background:#fff;border:2px solid #111;z-index:7;"></div>'+
+     signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
      '<div style="position:absolute;left:'+labelLeft+'px;top:'+labelTop+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
  function trackMarker(left,top){
