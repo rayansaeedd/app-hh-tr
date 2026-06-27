@@ -55,6 +55,37 @@
   .note + .note{margin-top:10px;}
   .divider{border:none;border-top:2px dashed #cbd5e1;margin:24px 0;}
   .empty{text-align:center;color:#94a3b8;margin-top:60px;font-size:14px;padding:0 24px;}
+
+  /* ---- Simulator (ETCS Cab DMI) ---- */
+  .simwrap{padding:0 16px 32px;font-family:'Barlow',-apple-system,Roboto,sans-serif;}
+  .simhead{margin:4px 0 14px;}
+  .simhead .st{font-size:20px;font-weight:800;color:#0f172a;}
+  .simhead .ss{font-size:12px;color:#64748b;margin-top:2px;}
+  .simq{background:#0d1f35;border:1.5px solid #1e3a5a;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#e6ebf2;font-style:italic;}
+  .dmi{background:#0a1a31;border:2px solid #20344e;border-radius:16px;padding:14px 10px 10px;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+  .dmi-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0 6px 6px;}
+  .dmi-tag{font-size:11px;font-weight:700;letter-spacing:.04em;color:#6fb0e6;}
+  .dmi-status{font-size:11px;color:#a3c25f;text-align:right;}
+  .strip{position:relative;height:54px;background:#0e2438;border-radius:8px;margin:0 6px 12px;overflow:hidden;border:1px solid #1e3a5a;}
+  .strip .rail{position:absolute;left:0;right:0;top:32px;height:4px;background:#28415c;}
+  .strip .train{position:absolute;top:14px;width:34px;height:18px;background:#e8edf3;border-radius:9px 4px 4px 9px;box-shadow:0 0 4px rgba(0,0,0,.4);}
+  .strip .sig{position:absolute;right:14px;top:8px;display:flex;flex-direction:column;gap:3px;background:#111;border-radius:3px;padding:4px;border:2px solid #333;}
+  .strip .sig .lamp{width:9px;height:9px;border-radius:50%;background:#111;}
+  .overspeed{display:none;background:#3a0f0f;border:1.5px solid #ff3b30;color:#ffb4ad;font-size:12px;font-weight:700;text-align:center;border-radius:8px;padding:6px;margin:0 6px 10px;letter-spacing:.04em;}
+  .overspeed.show{display:block;}
+  .simpanel{margin-top:16px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;padding:14px;}
+  .simpanel .pl{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px;}
+  .simpanel .pl:first-child{margin-top:0;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:6px;}
+  .sbtn{border:1.5px solid #e2e8f0;background:#f8fafc;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:600;color:#334155;cursor:pointer;}
+  .sbtn.on{background:#0f172a;border-color:#0f172a;color:#fff;}
+  .sbtn.gold{box-shadow:0 0 0 2px #f0e8b0 inset;}
+  .simrange{width:100%;margin-top:6px;accent-color:#0ea5e9;}
+  .drivebtn{width:100%;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;color:#fff;cursor:pointer;margin-top:4px;}
+  .drivebtn.stopped{background:#0ea5e9;}
+  .drivebtn.running{background:#ef4444;}
+  .resetbtn{width:100%;border:1.5px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:10px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;margin-top:8px;}
+  .simq-input{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:13px;margin-top:6px;resize:vertical;min-height:50px;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -280,7 +311,8 @@ var CATEGORIES=[
        ] }
    ] },
  { key:"procedures", name:"Procedures", color:"#06b6d4", desc:"Standard operating procedures", items:[], comingSoon:true },
- { key:"emergency", name:"Emergency", color:"#ef4444", desc:"Emergency actions", items:[], comingSoon:true }
+ { key:"emergency", name:"Emergency", color:"#ef4444", desc:"Emergency actions", items:[], comingSoon:true },
+ { key:"simulator", name:"Simulator", color:"#0ea5e9", desc:"Practice the ETCS cab DMI", isSimulator:true }
 ];
 
 var view="home", curCat=null, curItem=null, query="";
@@ -291,6 +323,7 @@ function render(){
  if(view==="home")return home();
  if(view==="category")return category();
  if(view==="situation")return situation();
+ if(view==="simulator")return simulator();
 }
 
 function home(){
@@ -306,7 +339,9 @@ function home(){
  for(var i=0;i<cards.length;i++){cards[i].onclick=function(){
    var k=this.getAttribute("data-k");
    for(var j=0;j<CATEGORIES.length;j++){if(CATEGORIES[j].key===k){curCat=CATEGORIES[j];break;}}
-   query="";view="category";window.scrollTo(0,0);render();
+   query="";window.scrollTo(0,0);
+   view=curCat.isSimulator?"simulator":"category";
+   render();
  };}
 }
 
@@ -452,6 +487,215 @@ function situation(){
  h+='</div>';
  app.innerHTML=h;
  document.getElementById("back").onclick=function(){view="category";window.scrollTo(0,0);render();};
+}
+
+/* ============================================================
+   SIMULATOR — practice ETCS cab DMI (speedometer, level/mode/RBC,
+   signal aspect, throttle/drive). Inspired by the Thameslink/Siemens
+   ATO-style cab display.
+   ============================================================ */
+var MAX_SPEED=560, ACCEL=200, DECEL=300;
+var ASPECTS=[
+ {id:"redblue", label:"Red / Blue", lamps:["red","blue","off"], perm:0},
+ {id:"red", label:"Red", lamps:["red","off","off"], perm:0},
+ {id:"redfixed", label:"Red Fixed", lamps:["red","off","off"], perm:160},
+ {id:"redflash", label:"Red Flash", lamps:["redflash","off","off"], perm:160},
+ {id:"white", label:"White", lamps:["off","off","white"], perm:300},
+ {id:"flash", label:"White Flash", lamps:["off","off","whiteflash"], perm:300}
+];
+var MODES=[
+ {id:"fs", label:"Full Sup."},
+ {id:"sr", label:"Staff Resp."},
+ {id:"sh", label:"Shunting"},
+ {id:"os", label:"On Sight"},
+ {id:"un", label:"Unfitted"}
+];
+var LAMP_COLOR={red:"#ff2b2b",blue:"#2299ff",white:"#ffffff",off:"#1a1a1a",redflash:"#ff2b2b",whiteflash:"#ffffff"};
+var sim={
+ level:2, mode:"fs", rbc:"connected", aspect:"redblue",
+ throttle:0.55, running:false,
+ v:0, displayV:0, dispKmh:0, odometer:0, trainPos:0.08,
+ raf:null, lastT:null, flashOn:true, flashT:0
+};
+function aspectById(id){for(var i=0;i<ASPECTS.length;i++){if(ASPECTS[i].id===id)return ASPECTS[i];}return ASPECTS[0];}
+function permSpeed(){return aspectById(sim.aspect).perm;}
+function polarPt(cx,cy,r,deg){var rad=(deg-90)*Math.PI/180;return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)];}
+function arcPath(cx,cy,r,a0,a1){
+ if(a1<=a0)return "";
+ var p0=polarPt(cx,cy,r,a0),p1=polarPt(cx,cy,r,a1);
+ var large=(a1-a0)>180?1:0;
+ return "M"+p0[0].toFixed(1)+","+p0[1].toFixed(1)+" A"+r+","+r+" 0 "+large+" 1 "+p1[0].toFixed(1)+","+p1[1].toFixed(1);
+}
+function dmiSvg(){
+ var cx=186,cy=168,r=130;
+ var ticks="";
+ for(var v=0;v<=300;v+=10){
+   var ang=225+(v/300)*270;
+   var major=(v%50===0);
+   var p1=polarPt(cx,cy,r,ang), p2=polarPt(cx,cy,r-(major?17:9),ang);
+   ticks+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="#cdd6e2" stroke-width="'+(major?2.5:1.3)+'"/>';
+   if(major){
+     var lp=polarPt(cx,cy,r-32,ang);
+     ticks+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" fill="#eef1f6" font-size="14" font-weight="700" text-anchor="middle" dominant-baseline="middle">'+v+'</text>';
+   }
+ }
+ var bgArc=arcPath(cx,cy,r,225,495);
+ var permArc=arcPath(cx,cy,r,225,225+(permSpeed()/300)*270);
+ return '<svg id="dmisvg" viewBox="0 0 372 340" style="width:100%;display:block;">'+
+   '<path d="'+bgArc+'" fill="none" stroke="#1d3350" stroke-width="14"/>'+
+   '<path d="'+permArc+'" fill="none" stroke="#8c8f94" stroke-width="14"/>'+
+   ticks+
+   '<g id="needle"></g>'+
+   '<circle cx="'+cx+'" cy="'+cy+'" r="27" fill="#fff" stroke="#b9c0c9" stroke-width="2"/>'+
+   '<text id="dspeed" x="'+cx+'" y="'+(cy+1)+'" fill="#0a1a31" font-size="23" font-weight="800" text-anchor="middle" dominant-baseline="middle">0</text>'+
+   '<text x="'+cx+'" y="'+(cy+44)+'" fill="#8ba8c0" font-size="11" text-anchor="middle">ODO</text>'+
+   '<text id="dodo" x="'+cx+'" y="'+(cy+60)+'" fill="#cdd6e2" font-size="15" font-weight="700" text-anchor="middle">0 m</text>'+
+ '</svg>';
+}
+function needleEl(){
+ var cx=186,cy=168;
+ var ang=225+(Math.max(0,Math.min(300,sim.dispKmh))/300)*270;
+ var tip=polarPt(cx,cy,118,ang);
+ var b1=polarPt(cx,cy,16,ang+90);
+ var b2=polarPt(cx,cy,16,ang-90);
+ return '<polygon points="'+tip[0].toFixed(1)+','+tip[1].toFixed(1)+' '+b1[0].toFixed(1)+','+b1[1].toFixed(1)+' '+b2[0].toFixed(1)+','+b2[1].toFixed(1)+'" fill="#fff"/>';
+}
+function lampSvg(state,flashOn){
+ var c=LAMP_COLOR[state]||"#1a1a1a";
+ if((state==="redflash"||state==="whiteflash")&&!flashOn)c="#1a1a1a";
+ return '<div class="lamp" style="background:'+c+'"></div>';
+}
+function fmtOdo(m){
+ if(m<1000)return Math.floor(m)+" m";
+ return (m/1000).toFixed(3)+" km";
+}
+function simulator(){
+ var h='<button class="back" id="back">&#8592; Categories</button><div class="simwrap">'+
+   '<div class="simhead"><div class="st">ETCS Cab Simulator</div><div class="ss">Drive, read the DMI, and respect the signal aspect</div></div>'+
+   '<div class="dmi">'+
+     '<div class="dmi-row"><span class="dmi-tag">L'+sim.level+' &middot; '+sim.mode.toUpperCase()+'</span><span class="dmi-status" id="rbcstat"></span></div>'+
+     dmiSvg()+
+     '<div class="overspeed" id="overspeed">OVERSPEED &mdash; BRAKE DEMAND</div>'+
+     '<div class="strip"><div class="rail"></div><div class="train" id="simtrain" style="background:#e8edf3;"></div>'+
+       '<div class="sig" id="sigbox"></div></div>'+
+   '</div>'+
+   '<div class="simpanel">'+
+     '<div class="pl">ETCS Level</div><div class="btnrow" id="levelbtns"></div>'+
+     '<div class="pl">RBC Connection</div><div class="btnrow" id="rbcbtns"></div>'+
+     '<div class="pl">Driving Mode</div><div class="btnrow" id="modebtns"></div>'+
+     '<div class="pl">Signal Aspect</div><div class="btnrow" id="aspectbtns"></div>'+
+     '<div class="pl">Throttle ('+Math.round(sim.throttle*100)+'%)</div>'+
+     '<input type="range" min="0" max="100" value="'+Math.round(sim.throttle*100)+'" class="simrange" id="throttle">'+
+     '<button class="drivebtn '+(sim.running?'running':'stopped')+'" id="drivebtn">'+(sim.running?'STOP':'DRIVE')+'</button>'+
+     '<button class="resetbtn" id="resetbtn">Reset Train</button>'+
+   '</div>'+
+ '</div>';
+ app.innerHTML=h;
+ document.getElementById("back").onclick=function(){
+  if(sim.raf)cancelAnimationFrame(sim.raf);sim.lastT=null;
+  view="home";window.scrollTo(0,0);render();
+ };
+ renderLevelBtns();renderRbcBtns();renderModeBtns();renderAspectBtns();renderSigBox();
+ document.getElementById("throttle").oninput=function(e){
+   sim.throttle=Number(e.target.value)/100;
+   document.querySelector(".simpanel .pl:nth-of-type(4)").textContent="Throttle ("+Math.round(sim.throttle*100)+"%)";
+ };
+ document.getElementById("drivebtn").onclick=function(){
+   sim.running=!sim.running;
+   this.textContent=sim.running?"STOP":"DRIVE";
+   this.className="drivebtn "+(sim.running?"running":"stopped");
+ };
+ document.getElementById("resetbtn").onclick=function(){
+   sim.v=0;sim.displayV=0;sim.dispKmh=0;sim.odometer=0;sim.trainPos=0.08;sim.running=false;
+   simulator();
+ };
+ startSimLoop();
+}
+function renderLevelBtns(){
+ var box=document.getElementById("levelbtns");if(!box)return;
+ var h="";
+ [0,1,2].forEach(function(l){h+='<button class="sbtn'+(sim.level===l?' on':'')+'" data-l="'+l+'">Level '+l+'</button>';});
+ box.innerHTML=h;
+ box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
+   sim.level=Number(this.getAttribute("data-l"));
+   if(sim.mode==="un")sim.level=0;
+   simulator();
+ };});
+}
+function renderRbcBtns(){
+ var box=document.getElementById("rbcbtns");if(!box)return;
+ var h='<button class="sbtn'+(sim.rbc==="connected"?' on':'')+'" data-r="connected">RBC On</button>'+
+       '<button class="sbtn'+(sim.rbc==="none"?' on':'')+'" data-r="none">No RBC</button>';
+ box.innerHTML=h;
+ box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
+   sim.rbc=this.getAttribute("data-r");simulator();
+ };});
+}
+function renderModeBtns(){
+ var box=document.getElementById("modebtns");if(!box)return;
+ var h="";
+ MODES.forEach(function(m){h+='<button class="sbtn'+(sim.mode===m.id?' on':'')+'" data-m="'+m.id+'">'+m.label+'</button>';});
+ box.innerHTML=h;
+ box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
+   sim.mode=this.getAttribute("data-m");
+   if(sim.mode==="un")sim.level=0;
+   simulator();
+ };});
+}
+function renderAspectBtns(){
+ var box=document.getElementById("aspectbtns");if(!box)return;
+ var h="";
+ ASPECTS.forEach(function(a){
+   h+='<button class="sbtn'+(sim.aspect===a.id?' on gold':'')+'" data-a="'+a.id+'" style="display:flex;align-items:center;gap:6px;">'+
+     '<span style="display:flex;gap:2px;">'+
+       a.lamps.map(function(l){return '<span style="width:7px;height:7px;border-radius:50%;display:inline-block;background:'+(LAMP_COLOR[l]||"#1a1a1a")+'"></span>';}).join("")+
+     '</span>'+esc(a.label)+'</button>';
+ });
+ box.innerHTML=h;
+ box.querySelectorAll(".sbtn").forEach(function(b){b.onclick=function(){
+   sim.aspect=this.getAttribute("data-a");simulator();
+ };});
+}
+function renderSigBox(){
+ var box=document.getElementById("sigbox");if(!box)return;
+ var a=aspectById(sim.aspect);
+ box.innerHTML=a.lamps.map(function(l){return lampSvg(l,sim.flashOn);}).join("");
+}
+function startSimLoop(){
+ if(sim.raf)cancelAnimationFrame(sim.raf);
+ sim.lastT=null;
+ function frame(t){
+   if(view!=="simulator")return;
+   if(sim.lastT===null)sim.lastT=t;
+   var dt=Math.min(0.05,(t-sim.lastT)/1000);
+   sim.lastT=t;
+   var perm=permSpeed();
+   var overspeed=sim.dispKmh>perm+5;
+   var target=(sim.running&&!overspeed)?sim.throttle*MAX_SPEED:0;
+   if(sim.v<target)sim.v=Math.min(target,sim.v+ACCEL*dt);
+   else sim.v=Math.max(target,sim.v-DECEL*dt);
+   sim.displayV+=(sim.v-sim.displayV)*Math.min(1,dt*14);
+   sim.dispKmh=Math.floor(sim.displayV/MAX_SPEED*300);
+   sim.odometer+=sim.v*dt*0.15;
+   sim.trainPos+=(sim.v/MAX_SPEED)*dt*0.12;
+   if(sim.trainPos>0.86){sim.trainPos=0.08;sim.odometer=0;}
+   sim.flashT+=dt;
+   if(sim.flashT>0.5){sim.flashT=0;sim.flashOn=!sim.flashOn;renderSigBox();}
+
+   var needle=document.getElementById("needle");
+   if(needle)needle.innerHTML=needleEl();
+   var ds=document.getElementById("dspeed");
+   if(ds)ds.textContent=Math.max(0,sim.dispKmh);
+   var od=document.getElementById("dodo");
+   if(od)od.textContent=fmtOdo(sim.odometer);
+   var tr=document.getElementById("simtrain");
+   if(tr)tr.style.left=(sim.trainPos*100)+"%";
+   var ov=document.getElementById("overspeed");
+   if(ov)ov.className="overspeed"+(overspeed?" show":"");
+
+   sim.raf=requestAnimationFrame(frame);
+ }
+ sim.raf=requestAnimationFrame(frame);
 }
 
 render();
