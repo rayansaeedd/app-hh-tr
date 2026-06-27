@@ -890,6 +890,29 @@ function siding4Markup(){
  function trackMarker(left,top){
    return '<svg style="position:absolute;left:'+left+'px;top:'+top+'px;z-index:8;" width="36" height="36" viewBox="0 0 36 36"><polygon points="18,2 34,18 18,34 2,18" fill="#fff" stroke="#2268d4" stroke-width="3"></polygon><polygon points="18,8 28,18 18,28 8,18" fill="#2268d4"></polygon></svg>';
  }
+ function sigLabel(left,top,txt){
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:28px;color:#111;white-space:nowrap;z-index:8;">'+txt+'</div>';
+ }
+ function fullPostSignal(hx,hy,id,facing,labelTxt){
+   var l=lamps(id,facing);
+   var capTop=hy+20, beamTop=hy+22, boardTop=hy+17, connTop=hy+22, labelTop=hy+72;
+   if(facing==="R"){
+     return '<div style="position:absolute;left:'+(hx+336)+'px;top:'+capTop+'px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
+       '<div style="position:absolute;left:'+(hx+321)+'px;top:'+capTop+'px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
+       '<div style="position:absolute;left:'+(hx+210)+'px;top:'+beamTop+'px;width:126px;height:5px;background:#111;z-index:6;"></div>'+
+       '<div style="position:absolute;left:'+(hx+148)+'px;top:'+boardTop+'px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+       '<div style="position:absolute;left:'+(hx+112)+'px;top:'+connTop+'px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
+       signalBlock(hx,hy,26,sel===id,lampDivs(l))+
+       sigLabel(hx+384,labelTop,labelTxt||id);
+   }
+   return '<div style="position:absolute;left:'+(hx-224)+'px;top:'+capTop+'px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+(hx-239)+'px;top:'+capTop+'px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+(hx-217)+'px;top:'+beamTop+'px;width:121px;height:5px;background:#111;z-index:6;"></div>'+
+     '<div style="position:absolute;left:'+(hx-96)+'px;top:'+boardTop+'px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
+     '<div style="position:absolute;left:'+(hx-36)+'px;top:'+connTop+'px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
+     signalBlock(hx,hy,26,sel===id,lampDivs(l))+
+     sigLabel(hx-310,labelTop,labelTxt||id);
+ }
  return '<div class="sim-stage-track" style="width:3400px;height:520px;transform:scale('+sim.scaleS+');">'+
    '<div style="position:absolute;left:0;right:0;top:160px;height:10px;background:#111;z-index:2;"></div>'+
    '<div style="position:absolute;left:0;right:0;top:258px;height:10px;background:#111;z-index:2;"></div>'+
@@ -919,8 +942,8 @@ function siding4Markup(){
    sigUnit(1972,339,"S3","R",2034,292,22)+
    trackMarker(2364,343)+
    '<div style="position:absolute;left:2980px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
-   sigUnit(2812,143,"E1","R",2884,96,26)+
-   sigUnit(2812,241,"E3","R",2884,194,26)+
+   fullPostSignal(2812,143,"E1","R")+
+   fullPostSignal(2812,241,"E3","R")+
    '<div id="simT1" style="'+t1Style+'">'+trainMarkup("T1","#2f6fd6",false)+'</div>'+
    '<div id="simT2" style="'+t2Style+'">'+trainMarkup("T2","#c07820",true)+'</div>'+
    stationSign("Siding 4","314.3","#5a1ec8")+
