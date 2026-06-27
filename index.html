@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Driver Quick Reference</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0b0f14">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{font-family:-apple-system,Roboto,sans-serif;background:#e2e8f0;color:#0f172a;}
@@ -1366,5 +1371,8 @@ function simulator(){
 }
 
 render();
+if('serviceWorker' in navigator){
+ window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});
+}
 </script>
 </body></html>
