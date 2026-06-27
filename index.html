@@ -881,21 +881,13 @@ function siding4Markup(){
  function sBoard(left,top){
    return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;width:32px;height:32px;border:3px solid #111;background:#fff;display:flex;align-items:center;justify-content:center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:22px;color:#111;z-index:5;">S</div>';
  }
- function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt){
+ function sigUnit(left,top,id,fn,labelLeft,labelTop,fsize,labelTxt,tagRight){
    var l=lamps(id,fn);
    var headLeft=left-10;
    var headW=126, headH=56;
-   var centerX=headLeft+headW/2;
-   var poleW=5;
-   var poleTop=top-22, poleBottom=top+headH+26;
-   var armTop=top+10, armLeft=headLeft+headW, armLen=46, armDrop=18;
-   return '<div style="position:absolute;left:'+(centerX-poleW/2)+'px;top:'+poleTop+'px;width:'+poleW+'px;height:'+(poleBottom-poleTop)+'px;background:#111;z-index:5;"></div>'+
-     '<div style="position:absolute;left:'+(centerX-12)+'px;top:'+poleBottom+'px;width:24px;height:5px;background:#111;z-index:5;"></div>'+
-     '<div style="position:absolute;left:'+armLeft+'px;top:'+armTop+'px;width:'+armLen+'px;height:3px;background:#111;z-index:9;"></div>'+
-     '<div style="position:absolute;left:'+armLeft+'px;top:'+(armTop+armDrop)+'px;width:'+(armLen-10)+'px;height:3px;background:#111;z-index:9;"></div>'+
-     '<div style="position:absolute;left:'+(armLeft+armLen-3)+'px;top:'+armTop+'px;width:3px;height:'+(armDrop+3)+'px;background:#111;z-index:9;"></div>'+
-     signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
-     '<div style="position:absolute;left:'+(headLeft-26)+'px;top:'+(top+headH/2-2)+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
+   var labelX=tagRight?(headLeft+headW+26):(headLeft-26);
+   return signalBlock(headLeft,top,12,sel===id,lampDivs(l),4)+
+     '<div style="position:absolute;left:'+labelX+'px;top:'+(top+headH/2-2)+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:'+fsize+'px;color:#111;white-space:nowrap;z-index:8;">'+(labelTxt||id)+'</div>';
  }
  function trackMarker(left,top){
    return '<svg style="position:absolute;left:'+left+'px;top:'+top+'px;z-index:8;" width="36" height="36" viewBox="0 0 36 36"><polygon points="18,2 34,18 18,34 2,18" fill="#fff" stroke="#2268d4" stroke-width="3"></polygon><polygon points="18,8 28,18 18,28 8,18" fill="#2268d4"></polygon></svg>';
@@ -946,9 +938,9 @@ function siding4Markup(){
    sigUnit(1572,84,"X11","R",1512,38,16,"X1/1")+
    sigUnit(1572,182,"X12","R",1512,136,16,"X1/2")+
    sigUnit(1572,280,"X14","R",1512,336,16,"X1/4")+
-   sigUnit(1792,84,"X21","L",1864,38,16,"X2/1")+
-   sigUnit(1792,182,"X22","L",1864,136,16,"X2/2")+
-   sigUnit(1792,280,"X24","L",1864,336,16,"X2/4")+
+   sigUnit(1792,84,"X21","L",1864,38,16,"X2/1",true)+
+   sigUnit(1792,182,"X22","L",1864,136,16,"X2/2",true)+
+   sigUnit(1792,280,"X24","L",1864,336,16,"X2/4",true)+
    sigUnit(1972,280,"S3","R",2034,233,17)+
    trackMarker(2364,343)+
    '<div style="position:absolute;left:2980px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
