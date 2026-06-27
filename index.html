@@ -816,8 +816,9 @@ function crossover3Markup(){
  function sBoard(left,top){
    return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;width:32px;height:32px;border:3px solid #111;background:#fff;display:flex;align-items:center;justify-content:center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:22px;color:#111;z-index:5;">S</div>';
  }
- function sigLabel(left,top,txt){
-   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;transform:rotate(-90deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:28px;color:#111;white-space:nowrap;z-index:8;">'+txt+'</div>';
+ function sigLabel(left,top,txt,rot180){
+   var rot=rot180?90:-90;
+   return '<div style="position:absolute;left:'+left+'px;top:'+top+'px;transform:rotate('+rot+'deg);transform-origin:center center;font-family:\'Barlow Semi Condensed\';font-weight:900;font-style:italic;font-size:28px;color:#111;white-space:nowrap;z-index:8;">'+txt+'</div>';
  }
  return '<div class="sim-stage-track" style="width:2600px;height:520px;transform:scale('+sim.scale+');">'+
    '<div style="position:absolute;left:0;right:0;top:212px;height:10px;background:#111;z-index:2;"></div>'+
@@ -835,7 +836,7 @@ function crossover3Markup(){
    '<div style="position:absolute;left:650px;top:165px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
    '<div style="position:absolute;left:710px;top:170px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
    signalBlock(746,148,26,sel==="E4",lampDivs(e4))+
-   sigLabel(894,162,"E4")+
+   sigLabel(894,162,"E4",true)+
    '<div style="position:absolute;left:2056px;top:168px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
    '<div style="position:absolute;left:2041px;top:168px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
    '<div style="position:absolute;left:1930px;top:170px;width:126px;height:5px;background:#111;z-index:6;"></div>'+
@@ -849,7 +850,7 @@ function crossover3Markup(){
    '<div style="position:absolute;left:650px;top:315px;width:60px;height:15px;background:#fff;border:2.5px solid #111;z-index:7;"></div>'+
    '<div style="position:absolute;left:710px;top:320px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
    signalBlock(746,298,26,sel==="E2",lampDivs(e2))+
-   sigLabel(894,312,"E2")+
+   sigLabel(894,312,"E2",true)+
    '<div style="position:absolute;left:2056px;top:318px;width:7px;height:44px;background:#111;z-index:6;"></div>'+
    '<div style="position:absolute;left:2041px;top:318px;width:34px;height:7px;background:#111;z-index:6;"></div>'+
    '<div style="position:absolute;left:1930px;top:320px;width:126px;height:5px;background:#111;z-index:6;"></div>'+
