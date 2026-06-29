@@ -359,8 +359,7 @@ var CATEGORIES=[
    ] },
  { key:"procedures", name:"Procedures", color:"#06b6d4", desc:"Standard operating procedures", items:[], comingSoon:true },
  { key:"emergency", name:"Emergency", color:"#ef4444", desc:"Emergency actions", items:[], comingSoon:true },
- { key:"simulator", name:"Simulator", color:"#0ea5e9", desc:"Practice the ETCS cab DMI", isSimulator:true },
- { key:"scenarios", name:"Scenarios", color:"#a855f7", desc:"Build & run branching training drills", isScenarios:true }
+ { key:"simulator", name:"Simulator", color:"#0ea5e9", desc:"Practice the ETCS cab DMI", isSimulator:true }
 ];
 
 var view="home", curCat=null, curItem=null, query="";
@@ -401,7 +400,6 @@ function render(){
  if(view==="category")return category();
  if(view==="situation")return situation();
  if(view==="simulator")return simulator();
- if(view==="scenarios")return scenariosScreen();
 }
 
 function home(){
@@ -418,8 +416,7 @@ function home(){
    var k=this.getAttribute("data-k");
    for(var j=0;j<CATEGORIES.length;j++){if(CATEGORIES[j].key===k){curCat=CATEGORIES[j];break;}}
    query="";window.scrollTo(0,0);
-   view=curCat.isSimulator?"simulator":(curCat.isScenarios?"scenarios":"category");
-   if(view==="scenarios"){scenView="list";scenEditing=null;}
+   view=curCat.isSimulator?"simulator":"category";
    render();
  };}
 }
@@ -1063,12 +1060,12 @@ function choiceRowMarkup(s,si,c,ci){
  h+='</div>';
  return h;
 }
-function scenariosScreen(){
- return scenView==="edit"?scenarioEditScreen():scenarioListScreen();
+function scenarioPanelMarkup(){
+ return scenView==="edit"?scenarioEditMarkup():scenarioListMarkup();
 }
-function scenarioListScreen(){
- var h='<header><button class="back" id="back">&larr; Back</button><h1>Scenarios</h1><p>Build and run branching training drills.</p></header>';
- h+='<div style="padding:16px;"><button class="sim-runbtn go" id="newScenBtn" style="width:100%;margin-bottom:14px;">+ New Scenario</button>';
+function scenarioListMarkup(){
+ var h='<div style="padding:16px;"><p style="color:#64748b;margin-top:0;">Build and run branching training drills.</p>'+
+   '<button class="sim-runbtn go" id="newScenBtn" style="width:100%;margin-bottom:14px;">+ New Scenario</button>';
  if(scenList.length===0){
    h+='<p style="color:#64748b;text-align:center;margin-top:24px;">No scenarios yet. Tap "New Scenario" to create one.</p>';
  }
@@ -1083,20 +1080,21 @@ function scenarioListScreen(){
      '</div></div>';
  });
  h+='</div>';
- app.innerHTML=h;
- document.getElementById("back").onclick=function(){view="home";window.scrollTo(0,0);render();};
- document.getElementById("newScenBtn").onclick=function(){scenEditing=newScenario();scenView="edit";render();};
+ return h;
+}
+function wireScenarioList(){
+ var nb=document.getElementById("newScenBtn"); if(nb)nb.onclick=function(){scenEditing=newScenario();scenView="edit";render();};
  app.querySelectorAll("[data-play]").forEach(function(b){b.onclick=function(){startScenario(scenList[Number(this.getAttribute("data-play"))]);};});
  app.querySelectorAll("[data-edit]").forEach(function(b){b.onclick=function(){scenEditing=JSON.parse(JSON.stringify(scenList[Number(this.getAttribute("data-edit"))]));scenView="edit";render();};});
  app.querySelectorAll("[data-del]").forEach(function(b){b.onclick=function(){
    if(confirm("Delete this scenario?")){scenList.splice(Number(this.getAttribute("data-del")),1);saveScenarioList();render();}
  };});
 }
-function scenarioEditScreen(){
+function scenarioEditMarkup(){
  var s=scenEditing;
  var sigOptions=Object.keys(SCEN_SIGNAL_POS[s.layout]);
- var h='<header><button class="back" id="back">&larr; Back</button><h1>Edit Scenario</h1></header>';
- h+='<div style="padding:16px;">';
+ var h='<div style="padding:16px;">';
+ h+='<button id="scenBackList" style="background:none;border:none;color:#2563eb;font-weight:700;padding:0 0 14px;">&larr; Back to scenario list</button>';
  h+='<label style="font-weight:700;display:block;margin-bottom:4px;">Name</label>'+
     '<input id="scenName" value="'+esc(s.name)+'" style="width:100%;padding:10px;margin-bottom:14px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">';
  h+='<label style="font-weight:700;display:block;margin-bottom:4px;">Layout</label>'+
@@ -1127,8 +1125,11 @@ function scenarioEditScreen(){
  h+='<button id="saveScenBtn" class="sim-runbtn go" style="width:100%;margin-bottom:10px;">Save Scenario</button>';
  h+='<button id="cancelScenBtn" class="sim-runbtn stop" style="width:100%;">Cancel</button>';
  h+='</div>';
- app.innerHTML=h;
- document.getElementById("back").onclick=function(){scenView="list";render();};
+ return h;
+}
+function wireScenarioEdit(){
+ var s=scenEditing;
+ document.getElementById("scenBackList").onclick=function(){scenView="list";render();};
  document.getElementById("cancelScenBtn").onclick=function(){scenView="list";render();};
  document.getElementById("scenName").oninput=function(e){s.name=e.target.value;};
  document.getElementById("scenLayout").onchange=function(e){s.layout=e.target.value;s.startSignal=Object.keys(SCEN_SIGNAL_POS[s.layout])[0];render();};
@@ -1465,8 +1466,9 @@ function renderSimulator(){
    '<div class="sim-tabs">'+
      '<button class="simtab'+(sim.view==="track"?' on':'')+'" id="viewTrack">Track Layout</button>'+
      '<button class="simtab'+(sim.view==="dmi"?' on':'')+'" id="viewDmi">Cabin &middot; Driver DMI</button>'+
+     '<button class="simtab'+(sim.view==="scenarios"?' on':'')+'" id="viewScenarios">Scenarios</button>'+
    '</div>'+
-   (sim.view==="track"?trackLayoutMarkup():'<div>'+cabinDmiMarkup()+'<div class="sim-panels">'+settingsPanelsMarkup()+'</div></div>')+
+   (sim.view==="track"?trackLayoutMarkup():sim.view==="dmi"?'<div>'+cabinDmiMarkup()+'<div class="sim-panels">'+settingsPanelsMarkup()+'</div></div>':scenarioPanelMarkup())+
  '</div>';
  app.innerHTML=h;
  wireSimulator();
@@ -1475,12 +1477,17 @@ function wireSimulator(){
  var back=document.getElementById("back");
  if(back)back.onclick=function(){
    if(sim.raf)cancelAnimationFrame(sim.raf);sim.lastT=null;
-   if(scenRun){scenRun=null;view="scenarios";scenView="list";}
-   else view="home";
+   if(scenRun){scenRun=null;sim.view="scenarios";scenView="list";renderSimulator();return;}
+   view="home";
    window.scrollTo(0,0);render();
  };
  var vt=document.getElementById("viewTrack"); if(vt)vt.onclick=function(){sim.view="track";renderSimulator();};
  var vd=document.getElementById("viewDmi"); if(vd)vd.onclick=function(){sim.view="dmi";renderSimulator();};
+ var vs=document.getElementById("viewScenarios"); if(vs)vs.onclick=function(){sim.view="scenarios";scenView="list";renderSimulator();};
+
+ if(sim.view==="scenarios"){
+   if(scenView==="edit")wireScenarioEdit(); else wireScenarioList();
+ }
 
  var tc=document.getElementById("tabCrossover"); if(tc)tc.onclick=function(){sim.layout="crossover3";renderSimulator();};
  var ts=document.getElementById("tabSiding"); if(ts)ts.onclick=function(){sim.layout="siding4";renderSimulator();};
