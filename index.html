@@ -1267,7 +1267,7 @@ function advanceScenario(){
 function scenarioRunBarMarkup(){
  if(!scenRun)return "";
  var s=scenRun.scenario, step=s.steps[scenRun.stepIndex];
- var h='<div class="sim-qbanner" style="background:#a855f7;flex-direction:column;align-items:stretch;gap:8px;">'+
+ var h='<div class="sim-qbanner" style="background:#2563eb;flex-direction:column;align-items:stretch;gap:8px;">'+
    '<div style="display:flex;justify-content:space-between;align-items:center;">'+
      '<b>'+esc(s.name)+' &middot; Step '+(scenRun.stepIndex+1)+'/'+s.steps.length+'</b>'+
      '<button id="scenExitBtn" style="background:none;border:1px solid #fff;color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;">Exit</button>'+
@@ -1312,6 +1312,7 @@ function trackLayoutMarkup(){
    '<div class="sim-drivebar">'+
      '<button class="sim-trainbtn'+(sim.activeTrain===1?' on':'')+'" id="trainBtn1" style="border-color:#2f6fd6;">Track 1 &middot; T1</button>'+
      '<button class="sim-trainbtn'+(sim.activeTrain===2?' on':'')+'" id="trainBtn2" style="border-color:#c07820;">Track 2 &middot; T2</button>'+
+     '<button class="sim-runbtn" id="overrideEoaBtn" style="background:#7a3fc9;">Override EOA</button>'+
      '<button class="sim-runbtn '+(curRunning()?'stop':'go')+'" id="runBtn">'+(curRunning()?"STOP":"DRIVE")+'</button>'+
    '</div>'+
  '</div>';
@@ -1539,6 +1540,17 @@ function wireSimulator(){
    if(sim.activeTrain===1)sim.running1=!sim.running1; else sim.running2=!sim.running2;
    renderSimulator();
  };});
+ var ovBtn=document.getElementById("overrideEoaBtn");
+ if(ovBtn)ovBtn.onclick=function(){
+   if(sim.overrideTimer)clearTimeout(sim.overrideTimer);
+   sim.dmiMode="or";
+   sim.overrideTimer=setTimeout(function(){
+     sim.dmiMode="sr";
+     sim.overrideTimer=null;
+     renderSimulator();
+   },15000);
+   renderSimulator();
+ };
 
  document.querySelectorAll(".sim-sigbtn[data-sig]").forEach(function(b){
    b.onclick=function(){setActiveSig(this.getAttribute("data-sig"));};
