@@ -385,9 +385,12 @@ function sigIdsForLayout(layout){
  return layout==="siding4"?base.concat(["X11","X21","X12","X22","X14","X24","S2","S3"]):base;
 }
 function normalizeScenario(s){
+ if(!s.startMode)s.startMode="fs";
  (s.steps||[]).forEach(function(step){
    step.choices=(step.choices||[]).map(function(c){
-     return typeof c==="string"?{label:c,aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""}:c;
+     if(typeof c==="string")c={label:c,aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""};
+     if(c.hornSound===undefined)c.hornSound=false;
+     return c;
    });
  });
  return s;
@@ -1024,11 +1027,11 @@ function miniDmiMarkup(){
 /* ---------- Track Layout tab ---------- */
 /* ---------- Scenarios ---------- */
 function newScenario(){
- return {id:"s"+Date.now(),name:"New Scenario",layout:"crossover3",startSignal:"E1",
+ return {id:"s"+Date.now(),name:"New Scenario",layout:"crossover3",startSignal:"E1",startMode:"fs",
    steps:[{distance:150,question:"Can you pass this signal?",choices:[
-     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""},
-     {label:"No",aspectSig:"E1",aspectVal:"red",mode:"",stopTrain:true,trafficReply:"",goto:""},
-     {label:"Call Traffic",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"Proceed with caution, SP.",goto:""}
+     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""},
+     {label:"No",aspectSig:"E1",aspectVal:"red",mode:"",stopTrain:true,hornSound:false,trafficReply:"",goto:""},
+     {label:"Call Traffic",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"Proceed with caution, SP.",goto:""}
    ]}]};
 }
 function choiceRowMarkup(s,si,c,ci){
@@ -1051,6 +1054,7 @@ function choiceRowMarkup(s,si,c,ci){
      MODES.map(function(m){return '<option value="'+m.id+'"'+(c.mode===m.id?" selected":"")+'>Set mode: '+esc(m.label)+'</option>';}).join("")+
    '</select>';
  h+='<label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px;"><input type="checkbox" data-cfield="stopTrain" data-step="'+si+'" data-choice="'+ci+'"'+(c.stopTrain?" checked":"")+'> Force STOP the train</label>';
+ h+='<label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px;"><input type="checkbox" data-cfield="hornSound" data-step="'+si+'" data-choice="'+ci+'"'+(c.hornSound?" checked":"")+'> Sound the horn</label>';
  h+='<textarea data-cfield="trafficReply" data-step="'+si+'" data-choice="'+ci+'" rows="2" placeholder="Traffic / signaller reply shown to trainee (optional)" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(c.trafficReply||"")+'</textarea>';
  h+='<select data-cfield="goto" data-step="'+si+'" data-choice="'+ci+'" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
      '<option value=""'+(c.goto===""||c.goto==null?" selected":"")+'>Then continue to next step</option>'+
@@ -1103,8 +1107,12 @@ function scenarioEditMarkup(){
       '<option value="siding4"'+(s.layout==="siding4"?" selected":"")+'>Siding 4</option>'+
     '</select>';
  h+='<label style="font-weight:700;display:block;margin-bottom:4px;">Train starts before signal</label>'+
-    '<select id="scenSignal" style="width:100%;padding:10px;margin-bottom:18px;border:1px solid #cbd5e1;border-radius:8px;">'+
+    '<select id="scenSignal" style="width:100%;padding:10px;margin-bottom:14px;border:1px solid #cbd5e1;border-radius:8px;">'+
       sigOptions.map(function(id){return '<option value="'+id+'"'+(s.startSignal===id?" selected":"")+'>'+id+'</option>';}).join('')+
+    '</select>';
+ h+='<label style="font-weight:700;display:block;margin-bottom:4px;">Driving mode before pressing Drive</label>'+
+    '<select id="scenStartMode" style="width:100%;padding:10px;margin-bottom:18px;border:1px solid #cbd5e1;border-radius:8px;">'+
+      MODES.map(function(m){return '<option value="'+m.id+'"'+(s.startMode===m.id?" selected":"")+'>'+esc(m.label)+'</option>';}).join("")+
     '</select>';
  h+='<div style="font-weight:800;font-size:18px;margin-bottom:10px;">Steps</div>';
  h+='<div id="scenSteps">';
@@ -1134,6 +1142,7 @@ function wireScenarioEdit(){
  document.getElementById("scenName").oninput=function(e){s.name=e.target.value;};
  document.getElementById("scenLayout").onchange=function(e){s.layout=e.target.value;s.startSignal=Object.keys(SCEN_SIGNAL_POS[s.layout])[0];render();};
  document.getElementById("scenSignal").onchange=function(e){s.startSignal=e.target.value;};
+ document.getElementById("scenStartMode").onchange=function(e){s.startMode=e.target.value;};
  app.querySelectorAll("[data-field]").forEach(function(el){
    el.oninput=function(){
      var i=Number(this.getAttribute("data-step")), f=this.getAttribute("data-field");
@@ -1146,6 +1155,7 @@ function wireScenarioEdit(){
      var si=Number(this.getAttribute("data-step")), ci=Number(this.getAttribute("data-choice")), f=this.getAttribute("data-cfield");
      var c=s.steps[si].choices[ci];
      if(f==="stopTrain")c.stopTrain=this.checked;
+     else if(f==="hornSound")c.hornSound=this.checked;
      else c[f]=this.value;
    };
    if(el.type==="checkbox")el.onchange=handler; else el.oninput=handler;
@@ -1153,7 +1163,7 @@ function wireScenarioEdit(){
  app.querySelectorAll("[data-addchoice]").forEach(function(b){
    b.onclick=function(){
      var si=Number(this.getAttribute("data-addchoice"));
-     s.steps[si].choices.push({label:"New choice",aspectSig:"",aspectVal:"red",mode:"",stopTrain:false,trafficReply:"",goto:""});
+     s.steps[si].choices.push({label:"New choice",aspectSig:"",aspectVal:"red",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""});
      render();
    };
  });
@@ -1169,8 +1179,8 @@ function wireScenarioEdit(){
  });
  document.getElementById("addStepBtn").onclick=function(){
    s.steps.push({distance:150,question:"",choices:[
-     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""},
-     {label:"No",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""}
+     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""},
+     {label:"No",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""}
    ]});render();
  };
  document.getElementById("saveScenBtn").onclick=function(){
@@ -1193,6 +1203,8 @@ function startScenario(scenario){
  if(pos.train===1)sim.t1x=pos.x; else sim.t2x=pos.x;
  sim.activeTrain=pos.train;
  if(scenario.layout==="crossover3")sim.activeSig=scenario.startSignal; else sim.activeSig4=scenario.startSignal;
+ sim.dmiMode=scenario.startMode||"fs";
+ if(sim.dmiMode==="un")sim.dmiLevel=0;
  scenRun={scenario:scenario,stepIndex:0,phase:"driving",distanceStart:0,answer:null};
  view="simulator";
  window.scrollTo(0,0);
@@ -1245,6 +1257,7 @@ function scenarioRunBarMarkup(){
    if(scenRun.answer!=null){
      var chosen=step.choices[scenRun.answer];
      h+='<div style="background:rgba(255,255,255,.25);padding:6px 10px;border-radius:6px;">Answered: <b>'+esc(chosen.label)+'</b>'+
+       (chosen.hornSound?'<br>&#128226; Horn sounded':'')+
        (chosen.trafficReply?'<br>Traffic: &ldquo;'+esc(chosen.trafficReply)+'&rdquo;':'')+'</div>';
      var nextIdx=(chosen.goto!==""&&chosen.goto!=null)?Number(chosen.goto):scenRun.stepIndex+1;
      var ends=!(nextIdx>=0&&nextIdx<s.steps.length);
