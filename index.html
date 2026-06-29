@@ -387,6 +387,9 @@ function sigIdsForLayout(layout){
 function normalizeScenario(s){
  if(!s.startMode)s.startMode="fs";
  (s.steps||[]).forEach(function(step){
+   if(step.arriveAspectSig===undefined)step.arriveAspectSig="";
+   if(step.arriveAspectVal===undefined)step.arriveAspectVal="";
+   if(step.arriveMode===undefined)step.arriveMode="";
    step.choices=(step.choices||[]).map(function(c){
      if(typeof c==="string")c={label:c,aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""};
      if(c.hornSound===undefined)c.hornSound=false;
@@ -1028,7 +1031,7 @@ function miniDmiMarkup(){
 /* ---------- Scenarios ---------- */
 function newScenario(){
  return {id:"s"+Date.now(),name:"New Scenario",layout:"crossover3",startSignal:"E1",startMode:"fs",
-   steps:[{distance:150,question:"Can you pass this signal?",choices:[
+   steps:[{distance:150,arriveAspectSig:"",arriveAspectVal:"",arriveMode:"",question:"Can you pass this signal?",choices:[
      {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""},
      {label:"No",aspectSig:"E1",aspectVal:"red",mode:"",stopTrain:true,hornSound:false,trafficReply:"",goto:""},
      {label:"Call Traffic",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"Proceed with caution, SP.",goto:""}
@@ -1121,6 +1124,20 @@ function scenarioEditMarkup(){
      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><b>Step '+(i+1)+'</b><button data-delstep="'+i+'" style="color:#dc2626;border:none;background:none;font-weight:700;">Remove</button></div>'+
      '<label style="font-size:13px;color:#64748b;">Drive distance (m) before auto-stop</label>'+
      '<input type="number" min="1" data-field="distance" data-step="'+i+'" value="'+step.distance+'" style="width:100%;padding:8px;margin:4px 0 10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+
+     '<div style="font-size:12px;color:#64748b;margin-bottom:4px;">On arrival, automatically&hellip; (applies as soon as the train stops, before the question)</div>'+
+     '<div style="display:flex;gap:8px;margin-bottom:8px;">'+
+       '<select data-field="arriveAspectSig" data-step="'+i+'" style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+         '<option value="">No signal change</option>'+
+         sigIdsForLayout(s.layout).map(function(id){return '<option value="'+id+'"'+(step.arriveAspectSig===id?" selected":"")+'>Set '+id+'</option>';}).join("")+
+       '</select>'+
+       '<select data-field="arriveAspectVal" data-step="'+i+'" style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+         ASPECT_OPTS.map(function(a){return '<option value="'+a.v+'"'+(step.arriveAspectVal===a.v?" selected":"")+'>'+a.l+'</option>';}).join("")+
+       '</select>'+
+     '</div>'+
+     '<select data-field="arriveMode" data-step="'+i+'" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+       '<option value="">No driving mode change</option>'+
+       MODES.map(function(m){return '<option value="'+m.id+'"'+(step.arriveMode===m.id?" selected":"")+'>Set mode: '+esc(m.label)+'</option>';}).join("")+
+     '</select>'+
      '<label style="font-size:13px;color:#64748b;">Question</label>'+
      '<textarea data-field="question" data-step="'+i+'" rows="2" style="width:100%;padding:8px;margin:4px 0 14px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(step.question)+'</textarea>'+
      '<div style="font-weight:700;margin-bottom:8px;">Choices</div>'+
@@ -1178,7 +1195,7 @@ function wireScenarioEdit(){
    b.onclick=function(){s.steps.splice(Number(this.getAttribute("data-delstep")),1);render();};
  });
  document.getElementById("addStepBtn").onclick=function(){
-   s.steps.push({distance:150,question:"",choices:[
+   s.steps.push({distance:150,arriveAspectSig:"",arriveAspectVal:"",arriveMode:"",question:"",choices:[
      {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""},
      {label:"No",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""}
    ]});render();
@@ -1222,6 +1239,16 @@ function applyChoiceEffects(layout,choice){
  }
  if(choice.stopTrain){sim.running1=false;sim.running2=false;}
 }
+function applyArrivalEffects(layout,step){
+ if(step.arriveAspectSig&&step.arriveAspectVal){
+   if(layout==="crossover3")sim.aspects[step.arriveAspectSig]=step.arriveAspectVal;
+   else sim.aspects4[step.arriveAspectSig]=step.arriveAspectVal;
+ }
+ if(step.arriveMode){
+   sim.dmiMode=step.arriveMode;
+   if(step.arriveMode==="un")sim.dmiLevel=0;
+ }
+}
 function advanceScenario(){
  if(!scenRun)return;
  var step=scenRun.scenario.steps[scenRun.stepIndex];
@@ -1248,6 +1275,7 @@ function scenarioRunBarMarkup(){
  if(scenRun.phase==="driving"){
    h+='<div>Drive &asymp;'+step.distance+' m &mdash; the train will auto-stop and a question will appear.</div>';
  } else {
+   if(step.arriveMode)h+='<div style="background:rgba(255,255,255,.25);padding:4px 10px;border-radius:6px;margin-bottom:4px;">Mode changed to <b>'+esc((MODES.filter(function(m){return m.id===step.arriveMode;})[0]||{label:step.arriveMode}).label)+'</b></div>';
    h+='<div style="font-weight:700;">'+esc(step.question)+'</div>';
    h+='<div style="display:flex;flex-wrap:wrap;gap:8px;">';
    (step.choices||[]).forEach(function(c,ci){
@@ -1685,6 +1713,7 @@ function startSimLoop(){
      if(travelled>=curStep.distance){
        sim.running1=false;sim.running2=false;
        scenRun.phase="question";scenRun.answer=null;
+       applyArrivalEffects(scenRun.scenario.layout,curStep);
        renderSimulator();
      }
    }
