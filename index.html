@@ -587,6 +587,43 @@ var MODES=[
  {id:"pt", label:"Post Trip"},
  {id:"or", label:"Override"}
 ];
+function dmiBeep(){
+ try{
+   var ctx=window._dmiAudioCtx||(window._dmiAudioCtx=new (window.AudioContext||window.webkitAudioContext)());
+   var o=ctx.createOscillator(), g=ctx.createGain();
+   o.type="sine"; o.frequency.value=880;
+   o.connect(g); g.connect(ctx.destination);
+   var now=ctx.currentTime;
+   g.gain.setValueAtTime(0.0001,now);
+   g.gain.exponentialRampToValueAtTime(0.16,now+0.012);
+   g.gain.exponentialRampToValueAtTime(0.0001,now+0.2);
+   o.start(now); o.stop(now+0.22);
+ }catch(e){}
+}
+function dmiNotify(text){
+ dmiBeep();
+ var el=document.getElementById("dmiToast");
+ if(!el){
+   el=document.createElement("div");
+   el.id="dmiToast";
+   el.style.cssText="position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#0d1f35;border:1.5px solid #3a7ab8;color:#e6ebf2;padding:8px 16px;border-radius:8px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.4);transition:opacity .3s;pointer-events:none;";
+   document.body.appendChild(el);
+ }
+ el.textContent=text;
+ el.style.opacity="1";
+ clearTimeout(window._dmiToastTimer);
+ window._dmiToastTimer=setTimeout(function(){el.style.opacity="0";},1600);
+}
+function modeLabel(id){var m=MODES.filter(function(x){return x.id===id;})[0];return m?m.label:id;}
+function setDmiMode(mode){
+ if(sim.dmiMode!==mode){sim.dmiMode=mode;if(mode==="un")sim.dmiLevel=0;dmiNotify("Mode: "+modeLabel(mode));}
+}
+function setDmiLevel(n){
+ if(sim.dmiLevel!==n){sim.dmiLevel=n;dmiNotify("Level: L"+n);}
+}
+function setDmiRbc(v){
+ if(sim.dmiRbc!==v){sim.dmiRbc=v;dmiNotify(v==="connected"?"RBC connected":"RBC: no connection");}
+}
 var ASPECT_DEFS=[
  ["red","Red only"],
  ["redblue","Red + Blue"],
@@ -1234,8 +1271,7 @@ function applyChoiceEffects(layout,choice){
    else sim.aspects4[choice.aspectSig]=choice.aspectVal;
  }
  if(choice.mode){
-   sim.dmiMode=choice.mode;
-   if(choice.mode==="un")sim.dmiLevel=0;
+   setDmiMode(choice.mode);
  }
  if(choice.stopTrain){sim.running1=false;sim.running2=false;}
 }
@@ -1245,8 +1281,7 @@ function applyArrivalEffects(layout,step){
    else sim.aspects4[step.arriveAspectSig]=step.arriveAspectVal;
  }
  if(step.arriveMode){
-   sim.dmiMode=step.arriveMode;
-   if(step.arriveMode==="un")sim.dmiLevel=0;
+   setDmiMode(step.arriveMode);
  }
 }
 function advanceScenario(){
@@ -1272,9 +1307,7 @@ function scenarioRunBarMarkup(){
      '<b>'+esc(s.name)+' &middot; Step '+(scenRun.stepIndex+1)+'/'+s.steps.length+'</b>'+
      '<button id="scenExitBtn" style="background:none;border:1px solid #fff;color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;">Exit</button>'+
    '</div>';
- if(scenRun.phase==="driving"){
-   h+='<div>Drive &asymp;'+step.distance+' m &mdash; the train will auto-stop and a question will appear.</div>';
- } else {
+ if(scenRun.phase!=="driving"){
    if(step.arriveMode)h+='<div style="background:rgba(255,255,255,.25);padding:4px 10px;border-radius:6px;margin-bottom:4px;">Mode changed to <b>'+esc((MODES.filter(function(m){return m.id===step.arriveMode;})[0]||{label:step.arriveMode}).label)+'</b></div>';
    h+='<div style="font-weight:700;">'+esc(step.question)+'</div>';
    h+='<div style="display:flex;flex-wrap:wrap;gap:8px;">';
@@ -1543,9 +1576,9 @@ function wireSimulator(){
  var ovBtn=document.getElementById("overrideEoaBtn");
  if(ovBtn)ovBtn.onclick=function(){
    if(sim.overrideTimer)clearTimeout(sim.overrideTimer);
-   sim.dmiMode="or";
+   setDmiMode("or");
    sim.overrideTimer=setTimeout(function(){
-     sim.dmiMode="sr";
+     setDmiMode("sr");
      sim.overrideTimer=null;
      renderSimulator();
    },4000);
@@ -1588,15 +1621,14 @@ function wireSimulator(){
  if(dmiPermAutoBtn)dmiPermAutoBtn.onclick=function(){sim.dmiPermManual=null;renderSimulator();};
 
  document.querySelectorAll(".sim-iconbtn[data-lvl]").forEach(function(b){
-   b.onclick=function(){sim.dmiLevel=Number(this.getAttribute("data-lvl"));renderSimulator();};
+   b.onclick=function(){setDmiLevel(Number(this.getAttribute("data-lvl")));renderSimulator();};
  });
  document.querySelectorAll(".sim-iconbtn[data-rbc]").forEach(function(b){
-   b.onclick=function(){sim.dmiRbc=this.getAttribute("data-rbc");renderSimulator();};
+   b.onclick=function(){setDmiRbc(this.getAttribute("data-rbc"));renderSimulator();};
  });
  document.querySelectorAll(".sim-iconbtn[data-mode]").forEach(function(b){
    b.onclick=function(){
-     sim.dmiMode=this.getAttribute("data-mode");
-     if(sim.dmiMode==="un")sim.dmiLevel=0;
+     setDmiMode(this.getAttribute("data-mode"));
      renderSimulator();
    };
  });
