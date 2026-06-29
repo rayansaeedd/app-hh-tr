@@ -365,7 +365,7 @@ var CATEGORIES=[
 
 var view="home", curCat=null, curItem=null, query="";
 var SCEN_KEY="etcsScenarios_v1";
-function loadScenarioList(){try{var l=JSON.parse(localStorage.getItem(SCEN_KEY)||"[]");return Array.isArray(l)?l:[];}catch(e){return [];}}
+function loadScenarioList(){try{var l=JSON.parse(localStorage.getItem(SCEN_KEY)||"[]");return Array.isArray(l)?l.map(normalizeScenario):[];}catch(e){return [];}}
 function saveScenarioList(){localStorage.setItem(SCEN_KEY,JSON.stringify(scenList));}
 var scenList=loadScenarioList();
 var scenView="list", scenEditing=null, scenRun=null;
@@ -376,6 +376,23 @@ var SCEN_SIGNAL_POS={
    X21:{train:1,x:2092},X22:{train:1,x:2092},X24:{train:1,x:2092},
    S2:{train:1,x:1250},E2:{train:1,x:832},E4:{train:1,x:832}}
 };
+var ASPECT_OPTS=[
+ {v:"red",l:"Red (Stop)"},{v:"redblue",l:"Red+Blue (Restrictive)"},
+ {v:"redflash",l:"Red Flashing"},{v:"redfixed",l:"Red Fixed"},
+ {v:"white",l:"White (Proceed)"},{v:"flash",l:"White Flashing"}
+];
+function sigIdsForLayout(layout){
+ var base=["E1","E2","E3","E4"];
+ return layout==="siding4"?base.concat(["X11","X21","X12","X22","X14","X24","S2","S3"]):base;
+}
+function normalizeScenario(s){
+ (s.steps||[]).forEach(function(step){
+   step.choices=(step.choices||[]).map(function(c){
+     return typeof c==="string"?{label:c,aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""}:c;
+   });
+ });
+ return s;
+}
 var app=document.getElementById("app");
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -1011,7 +1028,40 @@ function miniDmiMarkup(){
 /* ---------- Scenarios ---------- */
 function newScenario(){
  return {id:"s"+Date.now(),name:"New Scenario",layout:"crossover3",startSignal:"E1",
-   steps:[{distance:150,question:"Can you pass this signal?",choices:["Yes","No","Call Traffic"],trafficReply:""}]};
+   steps:[{distance:150,question:"Can you pass this signal?",choices:[
+     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""},
+     {label:"No",aspectSig:"E1",aspectVal:"red",mode:"",stopTrain:true,trafficReply:"",goto:""},
+     {label:"Call Traffic",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"Proceed with caution, SP.",goto:""}
+   ]}]};
+}
+function choiceRowMarkup(s,si,c,ci){
+ var sigIds=sigIdsForLayout(s.layout);
+ var h='<div style="border:1px dashed #cbd5e1;border-radius:8px;padding:10px;margin-bottom:10px;background:#f8fafc;">';
+ h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><b>Choice '+(ci+1)+'</b><button data-delchoice="'+si+'-'+ci+'" style="color:#dc2626;border:none;background:none;font-weight:700;">Remove</button></div>';
+ h+='<input data-cfield="label" data-step="'+si+'" data-choice="'+ci+'" value="'+esc(c.label||"")+'" placeholder="Choice label" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">';
+ h+='<div style="font-size:12px;color:#64748b;margin-bottom:4px;">If chosen, automatically&hellip;</div>';
+ h+='<div style="display:flex;gap:8px;margin-bottom:8px;">'+
+     '<select data-cfield="aspectSig" data-step="'+si+'" data-choice="'+ci+'" style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+       '<option value="">No signal change</option>'+
+       sigIds.map(function(id){return '<option value="'+id+'"'+(c.aspectSig===id?" selected":"")+'>Set '+id+'</option>';}).join("")+
+     '</select>'+
+     '<select data-cfield="aspectVal" data-step="'+si+'" data-choice="'+ci+'" style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+       ASPECT_OPTS.map(function(a){return '<option value="'+a.v+'"'+(c.aspectVal===a.v?" selected":"")+'>'+a.l+'</option>';}).join("")+
+     '</select>'+
+   '</div>';
+ h+='<select data-cfield="mode" data-step="'+si+'" data-choice="'+ci+'" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+     '<option value="">No driving mode change</option>'+
+     MODES.map(function(m){return '<option value="'+m.id+'"'+(c.mode===m.id?" selected":"")+'>Set mode: '+esc(m.label)+'</option>';}).join("")+
+   '</select>';
+ h+='<label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px;"><input type="checkbox" data-cfield="stopTrain" data-step="'+si+'" data-choice="'+ci+'"'+(c.stopTrain?" checked":"")+'> Force STOP the train</label>';
+ h+='<textarea data-cfield="trafficReply" data-step="'+si+'" data-choice="'+ci+'" rows="2" placeholder="Traffic / signaller reply shown to trainee (optional)" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(c.trafficReply||"")+'</textarea>';
+ h+='<select data-cfield="goto" data-step="'+si+'" data-choice="'+ci+'" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
+     '<option value=""'+(c.goto===""||c.goto==null?" selected":"")+'>Then continue to next step</option>'+
+     '<option value="-1"'+(String(c.goto)==="-1"?" selected":"")+'>Then end scenario</option>'+
+     s.steps.map(function(st,sti){return '<option value="'+sti+'"'+(String(c.goto)===String(sti)?" selected":"")+'>Then jump to Step '+(sti+1)+'</option>';}).join("")+
+   '</select>';
+ h+='</div>';
+ return h;
 }
 function scenariosScreen(){
  return scenView==="edit"?scenarioEditScreen():scenarioListScreen();
@@ -1066,11 +1116,10 @@ function scenarioEditScreen(){
      '<label style="font-size:13px;color:#64748b;">Drive distance (m) before auto-stop</label>'+
      '<input type="number" min="1" data-field="distance" data-step="'+i+'" value="'+step.distance+'" style="width:100%;padding:8px;margin:4px 0 10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+
      '<label style="font-size:13px;color:#64748b;">Question</label>'+
-     '<textarea data-field="question" data-step="'+i+'" rows="2" style="width:100%;padding:8px;margin:4px 0 10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(step.question)+'</textarea>'+
-     '<label style="font-size:13px;color:#64748b;">Choices (one per line)</label>'+
-     '<textarea data-field="choices" data-step="'+i+'" rows="3" style="width:100%;padding:8px;margin:4px 0 10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc((step.choices||[]).join("\n"))+'</textarea>'+
-     '<label style="font-size:13px;color:#64748b;">Traffic (signaller) reply if "Call Traffic" is chosen</label>'+
-     '<textarea data-field="trafficReply" data-step="'+i+'" rows="2" style="width:100%;padding:8px;margin:4px 0;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(step.trafficReply||"")+'</textarea>'+
+     '<textarea data-field="question" data-step="'+i+'" rows="2" style="width:100%;padding:8px;margin:4px 0 14px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(step.question)+'</textarea>'+
+     '<div style="font-weight:700;margin-bottom:8px;">Choices</div>'+
+     step.choices.map(function(c,ci){return choiceRowMarkup(s,i,c,ci);}).join("")+
+     '<button data-addchoice="'+i+'" class="sim-sigbtn" style="width:100%;">+ Add Choice</button>'+
    '</div>';
  });
  h+='</div>';
@@ -1088,15 +1137,40 @@ function scenarioEditScreen(){
    el.oninput=function(){
      var i=Number(this.getAttribute("data-step")), f=this.getAttribute("data-field");
      if(f==="distance")s.steps[i].distance=Number(this.value)||1;
-     else if(f==="choices")s.steps[i].choices=this.value.split("\n").map(function(t){return t.trim();}).filter(Boolean);
      else s.steps[i][f]=this.value;
+   };
+ });
+ app.querySelectorAll("[data-cfield]").forEach(function(el){
+   var handler=function(){
+     var si=Number(this.getAttribute("data-step")), ci=Number(this.getAttribute("data-choice")), f=this.getAttribute("data-cfield");
+     var c=s.steps[si].choices[ci];
+     if(f==="stopTrain")c.stopTrain=this.checked;
+     else c[f]=this.value;
+   };
+   if(el.type==="checkbox")el.onchange=handler; else el.oninput=handler;
+ });
+ app.querySelectorAll("[data-addchoice]").forEach(function(b){
+   b.onclick=function(){
+     var si=Number(this.getAttribute("data-addchoice"));
+     s.steps[si].choices.push({label:"New choice",aspectSig:"",aspectVal:"red",mode:"",stopTrain:false,trafficReply:"",goto:""});
+     render();
+   };
+ });
+ app.querySelectorAll("[data-delchoice]").forEach(function(b){
+   b.onclick=function(){
+     var parts=this.getAttribute("data-delchoice").split("-");
+     s.steps[Number(parts[0])].choices.splice(Number(parts[1]),1);
+     render();
    };
  });
  app.querySelectorAll("[data-delstep]").forEach(function(b){
    b.onclick=function(){s.steps.splice(Number(this.getAttribute("data-delstep")),1);render();};
  });
  document.getElementById("addStepBtn").onclick=function(){
-   s.steps.push({distance:150,question:"",choices:["Yes","No"],trafficReply:""});render();
+   s.steps.push({distance:150,question:"",choices:[
+     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""},
+     {label:"No",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""}
+   ]});render();
  };
  document.getElementById("saveScenBtn").onclick=function(){
    if(!s.name.trim())s.name="Untitled Scenario";
@@ -1123,10 +1197,25 @@ function startScenario(scenario){
  window.scrollTo(0,0);
  render();
 }
+function applyChoiceEffects(layout,choice){
+ if(!choice)return;
+ if(choice.aspectSig&&choice.aspectVal){
+   if(layout==="crossover3")sim.aspects[choice.aspectSig]=choice.aspectVal;
+   else sim.aspects4[choice.aspectSig]=choice.aspectVal;
+ }
+ if(choice.mode){
+   sim.dmiMode=choice.mode;
+   if(choice.mode==="un")sim.dmiLevel=0;
+ }
+ if(choice.stopTrain){sim.running1=false;sim.running2=false;}
+}
 function advanceScenario(){
  if(!scenRun)return;
- if(scenRun.stepIndex+1<scenRun.scenario.steps.length){
-   scenRun.stepIndex++;
+ var step=scenRun.scenario.steps[scenRun.stepIndex];
+ var choice=step.choices[scenRun.answer];
+ var nextIdx=(choice&&choice.goto!==""&&choice.goto!=null)?Number(choice.goto):scenRun.stepIndex+1;
+ if(nextIdx>=0&&nextIdx<scenRun.scenario.steps.length){
+   scenRun.stepIndex=nextIdx;
    scenRun.phase="driving";
    scenRun.answer=null;
    scenRun.distanceStart=sim.odometer;
@@ -1149,14 +1238,16 @@ function scenarioRunBarMarkup(){
    h+='<div style="font-weight:700;">'+esc(step.question)+'</div>';
    h+='<div style="display:flex;flex-wrap:wrap;gap:8px;">';
    (step.choices||[]).forEach(function(c,ci){
-     h+='<button class="sim-sigbtn" data-choice="'+ci+'" style="background:#fff;'+(scenRun.answer===ci?'outline:2px solid #111;':'')+'">'+esc(c)+'</button>';
+     h+='<button class="sim-sigbtn" data-choice="'+ci+'" style="background:#fff;'+(scenRun.answer===ci?'outline:2px solid #111;':'')+'">'+esc(c.label)+'</button>';
    });
    h+='</div>';
    if(scenRun.answer!=null){
      var chosen=step.choices[scenRun.answer];
-     h+='<div style="background:rgba(255,255,255,.25);padding:6px 10px;border-radius:6px;">Answered: <b>'+esc(chosen)+'</b>'+
-       (/traffic/i.test(chosen)&&step.trafficReply?'<br>Traffic: &ldquo;'+esc(step.trafficReply)+'&rdquo;':'')+'</div>';
-     h+='<button id="scenContinueBtn" class="sim-runbtn go" style="width:100%;">'+(scenRun.stepIndex+1<s.steps.length?"Continue":"Finish Scenario")+'</button>';
+     h+='<div style="background:rgba(255,255,255,.25);padding:6px 10px;border-radius:6px;">Answered: <b>'+esc(chosen.label)+'</b>'+
+       (chosen.trafficReply?'<br>Traffic: &ldquo;'+esc(chosen.trafficReply)+'&rdquo;':'')+'</div>';
+     var nextIdx=(chosen.goto!==""&&chosen.goto!=null)?Number(chosen.goto):scenRun.stepIndex+1;
+     var ends=!(nextIdx>=0&&nextIdx<s.steps.length);
+     h+='<button id="scenContinueBtn" class="sim-runbtn go" style="width:100%;">'+(ends?"Finish Scenario":"Continue")+'</button>';
    }
  }
  h+='</div>';
@@ -1497,7 +1588,10 @@ function wireSimulator(){
  document.querySelectorAll("[data-choice]").forEach(function(b){
    b.onclick=function(){
      if(!scenRun||scenRun.phase!=="question")return;
-     scenRun.answer=Number(this.getAttribute("data-choice"));
+     var ci=Number(this.getAttribute("data-choice"));
+     scenRun.answer=ci;
+     var step=scenRun.scenario.steps[scenRun.stepIndex];
+     applyChoiceEffects(scenRun.scenario.layout,step.choices[ci]);
      renderSimulator();
    };
  });
