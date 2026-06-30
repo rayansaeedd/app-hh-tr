@@ -1051,20 +1051,21 @@ function siding4Markup(){
 function miniDmiMarkup(){
  var docked=sim.miniDmiX===null;
  var dockStyle=docked?"position:relative;margin:10px auto 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
- return '<div class="mini-dmi-dock" id="miniDmiDock" style="'+dockStyle+'">'+
-   '<div class="mini-dmi" id="miniDmi" style="left:0;top:0;width:320px;height:210px;">'+
+ var arrowPad='<div class="mini-arrowpad" id="miniArrows" style="display:flex;align-items:center;justify-content:center;">'+
+   '<div class="sim-arrowgrid">'+
+     '<div></div><button id="miniUp">&#9650;</button><div></div>'+
+     '<button id="miniLeft">&#9664;</button><div class="dotcell"><div class="dot"></div></div><button id="miniRight">&#9654;</button>'+
+     '<div></div><button id="miniDown">&#9660;</button><div></div>'+
+   '</div>'+
+ '</div>';
+ return '<div class="mini-dmi-dock" id="miniDmiDock" style="'+dockStyle+'display:flex;align-items:center;gap:8px;">'+
+   '<div class="mini-dmi" id="miniDmi" style="position:relative;left:auto;top:auto;width:320px;height:210px;flex-shrink:0;">'+
      '<svg viewBox="0 0 640 480" width="320" height="210" style="display:block;" font-family="Barlow,sans-serif">'+
        dmiSpeedoSvgInner()+
        dmiFullExtrasSvg()+
      '</svg>'+
    '</div>'+
-   '<div class="mini-arrowpad" id="miniArrows">'+
-     '<div class="sim-arrowgrid">'+
-       '<div></div><button id="miniUp">&#9650;</button><div></div>'+
-       '<button id="miniLeft">&#9664;</button><div class="dotcell"><div class="dot"></div></div><button id="miniRight">&#9654;</button>'+
-       '<div></div><button id="miniDown">&#9660;</button><div></div>'+
-     '</div>'+
-   '</div>'+
+   arrowPad+
  '</div>';
 }
 
