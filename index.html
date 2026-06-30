@@ -660,6 +660,7 @@ var sim={
  dmiPermManual:null,
  miniDmiX:null, miniDmiY:null,
  questionText:"",
+ dmiMessage:"",
  raf:null, lastT:null
 };
 
@@ -841,7 +842,7 @@ function dmiFullExtrasSvg(){
    '<path d="M540 330 a13 13 0 1 1 -4 -9" fill="none" stroke="#cdd6e2" stroke-width="2"></path>'+
    '<polygon points="536,318 528,326 540,329" fill="#cdd6e2"></polygon>'+
    '<text x="58" y="384" fill="#a3c25f" font-size="13">16:47</text>'+
-   '<text x="98" y="384" fill="#eef1f6" font-size="15">Test Message</text>'+
+   '<text x="98" y="384" fill="#eef1f6" font-size="15">'+esc(sim.dmiMessage||"")+'</text>'+
    '<rect x="286" y="360" width="42" height="42" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
    '<rect x="286" y="406" width="42" height="42" fill="none" stroke="#2c466a" stroke-width="1.5"></rect>'+
    '<polygon points="307,372 297,388 317,388" fill="#dfe5ee"></polygon>'+
@@ -1049,10 +1050,11 @@ function miniDmiMarkup(){
  var docked=sim.miniDmiX===null;
  var dockStyle=docked?"position:relative;margin:10px auto 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
  return '<div class="mini-dmi-dock" id="miniDmiDock" style="'+dockStyle+'">'+
-   '<div class="mini-dmi" id="miniDmi" style="left:0;top:0;">'+
-     '<div class="mini-dmi-hd"><span style="font-size:9px;font-weight:700;color:#6fb0e6;letter-spacing:.8px;">&#10495; CABIN DMI</span>'+
-     '<span style="font-size:9px;font-weight:700;color:#a3c25f;font-family:\'Barlow Semi Condensed\',sans-serif;">L'+sim.dmiLevel+' &middot; '+sim.dmiMode.toUpperCase()+'</span></div>'+
-     dmiSpeedoSvg(380,340,200,133,17)+
+   '<div class="mini-dmi" id="miniDmi" style="left:0;top:0;width:200px;height:150px;">'+
+     '<svg viewBox="0 0 640 480" width="200" height="150" style="display:block;" font-family="Barlow,sans-serif">'+
+       dmiSpeedoSvgInner()+
+       dmiFullExtrasSvg()+
+     '</svg>'+
    '</div>'+
    '<div class="mini-arrowpad" id="miniArrows" style="left:204px;top:54px;">'+
      '<div class="sim-arrowgrid">'+
@@ -1463,7 +1465,13 @@ function settingsPanelsMarkup(){
          var on=sim.dmiMode===m.id;
          return '<button class="sim-iconbtn'+(on?' on':'')+'" data-mode="'+m.id+'">'+modeIconSvg(m.id)+'<span>'+m.label+'</span></button>';
        }).join("")+
-     '</div></div>';
+     '</div></div>'+
+     '<div style="display:flex;flex-direction:column;gap:5px;"><div class="sim-sec-lbl">DMI TEXT MESSAGE</div>'+
+       '<div style="display:flex;gap:6px;">'+
+         '<input id="dmiMsgInput" type="text" value="'+esc(sim.dmiMessage||"")+'" placeholder="Type message shown on DMI…" style="flex:1;padding:8px;background:#0a1220;border:1px solid #2c466a;border-radius:8px;color:#e6ebf2;font-size:13px;font-family:inherit;">'+
+         '<button id="dmiMsgClear" class="sim-settbtn" style="padding:6px 10px;">Clear</button>'+
+       '</div>'+
+     '</div>';
  }
  var dmiPanel='<div class="sim-panel">'+
    '<div style="display:flex;align-items:center;justify-content:space-between;"><div class="sim-panel-lbl">DMI DISPLAY</div>'+
@@ -1624,6 +1632,10 @@ function wireSimulator(){
  };
  var dmiPermAutoBtn=document.getElementById("dmiPermAutoBtn");
  if(dmiPermAutoBtn)dmiPermAutoBtn.onclick=function(){sim.dmiPermManual=null;renderSimulator();};
+ var dmiMsgInput=document.getElementById("dmiMsgInput");
+ if(dmiMsgInput)dmiMsgInput.oninput=function(){sim.dmiMessage=this.value;renderSimulator();};
+ var dmiMsgClear=document.getElementById("dmiMsgClear");
+ if(dmiMsgClear)dmiMsgClear.onclick=function(){sim.dmiMessage="";renderSimulator();};
 
  document.querySelectorAll(".sim-iconbtn[data-lvl]").forEach(function(b){
    b.onclick=function(){setDmiLevel(Number(this.getAttribute("data-lvl")));renderSimulator();};
