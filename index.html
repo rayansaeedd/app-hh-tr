@@ -370,10 +370,10 @@ var scenList=loadScenarioList();
 var scenView="list", scenEditing=null, scenRun=null;
 var SCEN_SIGNAL_POS={
  crossover3:{E1:{train:1,x:2820},E4:{train:1,x:1546},E2:{train:2,x:446},E3:{train:2,x:1920}},
- siding4:{E1:{train:1,x:3112},E3:{train:1,x:3112},S3:{train:1,x:2690},
-   X11:{train:1,x:1872},X12:{train:1,x:1872},X14:{train:1,x:1872},
-   X21:{train:1,x:2092},X22:{train:1,x:2092},X24:{train:1,x:2092},
-   S2:{train:1,x:1250},E2:{train:1,x:832},E4:{train:1,x:832}}
+ siding4:{E1:{train:1,x:4312},E3:{train:1,x:4312},S3:{train:1,x:3290},
+   X11:{train:1,x:2472},X12:{train:1,x:2472},X14:{train:1,x:2472},
+   X21:{train:1,x:2692},X22:{train:1,x:2692},X24:{train:1,x:2692},
+   S2:{train:1,x:1850},E2:{train:1,x:1432},E4:{train:1,x:1432}}
 };
 var ASPECT_OPTS=[
  {v:"red",l:"Red (Stop)"},{v:"redblue",l:"Red+Blue (Restrictive)"},
@@ -1013,37 +1013,37 @@ function siding4Markup(){
      signalBlock(hx,hy,26,sel===id,lampDivs(l))+
      sigLabel(hx+148,labelTop,labelTxt||id,labelRot180);
  }
- return '<div class="sim-stage-track" style="width:3400px;height:520px;transform:scale('+sim.scaleS+');">'+
+ return '<div class="sim-stage-track" style="width:4600px;height:520px;transform:scale('+sim.scaleS+');">'+
    '<div style="position:absolute;left:0;right:0;top:160px;height:10px;background:#111;z-index:2;"></div>'+
    '<div style="position:absolute;left:0;right:0;top:258px;height:10px;background:#111;z-index:2;"></div>'+
-   '<div style="position:absolute;left:300px;width:780px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
-   '<div style="position:absolute;left:1320px;width:760px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
-   '<div style="position:absolute;left:2320px;width:780px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
-   '<svg style="position:absolute;left:0;top:0;width:3400px;height:520px;overflow:visible;pointer-events:none;z-index:3;">'+
-     '<path d="M 1340,165 C 1430,165 1430,263 1520,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
-     '<path d="M 1880,263 C 1970,263 1970,165 2060,165" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
-     '<path d="M 1100,263 C 1210,263 1210,361 1320,361" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
-     '<path d="M 2080,361 C 2190,361 2190,263 2300,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+   '<div style="position:absolute;left:900px;width:780px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:1920px;width:760px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
+   '<div style="position:absolute;left:2920px;width:780px;top:356px;height:10px;background:#111;z-index:2;"></div>'+
+   '<svg style="position:absolute;left:0;top:0;width:4600px;height:520px;overflow:visible;pointer-events:none;z-index:3;">'+
+     '<path d="M 1940,165 C 2030,165 2030,263 2120,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 2480,263 C 2570,263 2570,165 2660,165" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 1700,263 C 1810,263 1810,361 1920,361" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
+     '<path d="M 2680,361 C 2790,361 2790,263 2900,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
    '</svg>'+
    blockBoard(16,120,"3126","3125")+blockBoard(16,218,"3125","3124")+
-   blockBoard(3236,120,"3170","3169")+blockBoard(3236,218,"3169","3168")+
-   sBoard(240,148)+sBoard(240,246)+sBoard(3078,148)+sBoard(3078,246)+
-   fullPostSignal(532,96,"E4","L",null,true)+
-   fullPostSignal(532,194,"E2","L",null,true)+
-   trackMarker(330,343)+
-   '<div style="position:absolute;left:320px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4A</div>'+
-   sigUnit(950,280,"S2","L",894,233,17,null,true,false)+
-   sigUnit(1572,84,"X11","R",1512,38,16,"X1/1")+
-   sigUnit(1572,182,"X12","R",1512,136,16,"X1/2")+
-   sigUnit(1572,280,"X14","R",1512,336,16,"X1/4")+
-   sigUnit(1792,84,"X21","L",1864,38,16,"X2/1",true)+
-   sigUnit(1792,182,"X22","L",1864,136,16,"X2/2",true,false)+
-   sigUnit(1792,280,"X24","L",1864,336,16,"X2/4",true)+
-   sigUnit(2390,280,"S3","R",2452,233,17)+
-   trackMarker(2950,343)+
-   '<div style="position:absolute;left:2980px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
-   fullPostSignal(2812,96,"E1","R")+
-   fullPostSignal(2812,194,"E3","R")+
+   blockBoard(4436,120,"3170","3169")+blockBoard(4436,218,"3169","3168")+
+   sBoard(240,148)+sBoard(240,246)+sBoard(4278,148)+sBoard(4278,246)+
+   fullPostSignal(1132,96,"E4","L",null,true)+
+   fullPostSignal(1132,194,"E2","L",null,true)+
+   trackMarker(930,343)+
+   '<div style="position:absolute;left:920px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4A</div>'+
+   sigUnit(1550,280,"S2","L",1494,233,17,null,true,false)+
+   sigUnit(2172,84,"X11","R",2112,38,16,"X1/1")+
+   sigUnit(2172,182,"X12","R",2112,136,16,"X1/2")+
+   sigUnit(2172,280,"X14","R",2112,336,16,"X1/4")+
+   sigUnit(2392,84,"X21","L",2464,38,16,"X2/1",true)+
+   sigUnit(2392,182,"X22","L",2464,136,16,"X2/2",true,false)+
+   sigUnit(2392,280,"X24","L",2464,336,16,"X2/4",true)+
+   sigUnit(2990,280,"S3","R",3052,233,17)+
+   trackMarker(4150,343)+
+   '<div style="position:absolute;left:4180px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
+   fullPostSignal(4012,96,"E1","R")+
+   fullPostSignal(4012,194,"E3","R")+
    '<div id="simT1" style="'+t1Style+'">'+trainMarkup("T1","#2f6fd6",false)+'</div>'+
    '<div id="simT2" style="'+t2Style+'">'+trainMarkup("T2","#c07820",true)+'</div>'+
    stationSign("Siding 4","314.3","#5a1ec8")+
@@ -1661,7 +1661,7 @@ function fitSimScale(){
  var baseW=appEl?appEl.clientWidth:window.innerWidth;
  var w=Math.max(280,baseW-16);
  sim.scale=w/3600;
- sim.scaleS=w/3400;
+ sim.scaleS=w/4600;
  sim.dmiScale=w/640;
 }
 function renderSimulator(){
@@ -1883,11 +1883,11 @@ function startSimLoop(){
    var b1=sim.running1?sim.throttle*MAX:0;
    sim.v1=sim.v1<b1?Math.min(b1,sim.v1+A*dt):Math.max(b1,sim.v1-D*dt);
    sim.t1x-=sim.v1*dt;
-   if(sim.t1x<-320)sim.t1x=3600;
+   if(sim.t1x<-320)sim.t1x=(sim.layout==="siding4"?4600:3600);
    var b2=sim.running2?sim.throttle*MAX:0;
    sim.v2=sim.v2<b2?Math.min(b2,sim.v2+A*dt):Math.max(b2,sim.v2-D*dt);
    sim.t2x+=sim.v2*dt;
-   if(sim.t2x>3600)sim.t2x=-320;
+   if(sim.t2x>(sim.layout==="siding4"?4600:3600))sim.t2x=-320;
    var targetV=sim.activeTrain===1?sim.v1:sim.v2;
    sim.displayV+=(targetV-sim.displayV)*Math.min(1,dt*14);
    var newKmh=Math.max(0,Math.min(300,Math.floor(sim.displayV/MAX*300)));
