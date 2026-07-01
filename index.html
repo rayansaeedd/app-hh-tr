@@ -370,7 +370,7 @@ var scenList=loadScenarioList();
 var scenView="list", scenEditing=null, scenRun=null;
 var SCEN_SIGNAL_POS={
  crossover3:{E1:{train:1,x:2820},E4:{train:1,x:1546},E2:{train:2,x:446},E3:{train:2,x:1920}},
- siding4:{E1:{train:1,x:4312},E3:{train:1,x:4312},S3:{train:1,x:3290},
+ siding4:{E1:{train:1,x:3768},E3:{train:1,x:3768},S3:{train:1,x:3290},
    X11:{train:1,x:2472},X12:{train:1,x:2472},X14:{train:1,x:2472},
    X21:{train:1,x:2692},X22:{train:1,x:2692},X24:{train:1,x:2692},
    S2:{train:1,x:1850},E2:{train:1,x:1432},E4:{train:1,x:1432}}
@@ -952,7 +952,7 @@ function crossover3Markup(){
    '<div style="position:absolute;left:2332px;top:320px;width:36px;height:5px;background:#111;z-index:6;"></div>'+
    signalBlock(2220,298,26,sel==="E3",lampDivs(e3))+
    sigLabel(2162,312,"E3")+
-   sBoard(2764,202)+sBoard(2764,352)+
+   sBoard(3166,202)+sBoard(3166,352)+
    '<div id="simT1" style="'+t1Style+'">'+trainMarkup("T1","#2f6fd6",false)+'</div>'+
    '<div id="simT2" style="'+t2Style+'">'+trainMarkup("T2","#c07820",true)+'</div>'+
    stationSign("Crossover 3","100.5","#3a1d8e")+
@@ -1026,8 +1026,8 @@ function siding4Markup(){
      '<path d="M 2680,361 C 2790,361 2790,263 2900,263" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"></path>'+
    '</svg>'+
    blockBoard(16,120,"3126","3125")+blockBoard(16,218,"3125","3124")+
-   blockBoard(4436,120,"3170","3169")+blockBoard(4436,218,"3169","3168")+
-   sBoard(240,148)+sBoard(240,246)+sBoard(4278,148)+sBoard(4278,246)+
+   blockBoard(4456,120,"3170","3169")+blockBoard(4456,218,"3169","3168")+
+   sBoard(240,148)+sBoard(240,246)+sBoard(4360,148)+sBoard(4360,246)+
    fullPostSignal(1132,96,"E4","L",null,true)+
    fullPostSignal(1132,194,"E2","L",null,true)+
    trackMarker(930,343)+
@@ -1040,10 +1040,10 @@ function siding4Markup(){
    sigUnit(2392,182,"X22","L",2464,136,16,"X2/2",true,false)+
    sigUnit(2392,280,"X24","L",2464,336,16,"X2/4",true)+
    sigUnit(2990,280,"S3","R",3052,233,17)+
-   trackMarker(4150,343)+
-   '<div style="position:absolute;left:4180px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
-   fullPostSignal(4012,96,"E1","R")+
-   fullPostSignal(4012,194,"E3","R")+
+   trackMarker(3610,343)+
+   '<div style="position:absolute;left:3640px;top:386px;font-family:\'Barlow Semi Condensed\';font-weight:900;font-size:15px;color:#111;z-index:8;white-space:nowrap;">TRACK 4B</div>'+
+   fullPostSignal(3468,96,"E1","R")+
+   fullPostSignal(3468,194,"E3","R")+
    '<div id="simT1" style="'+t1Style+'">'+trainMarkup("T1","#2f6fd6",false)+'</div>'+
    '<div id="simT2" style="'+t2Style+'">'+trainMarkup("T2","#c07820",true)+'</div>'+
    stationSign("Siding 4","314.3","#5a1ec8")+
