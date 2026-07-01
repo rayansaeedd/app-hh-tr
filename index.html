@@ -765,7 +765,6 @@ function curPermSpeed(){
  return sim.dmiPermManual!==null?sim.dmiPermManual:autoPermSpeed();
 }
 function curKmh(){
- if(sim.dmiSpeedManual)return Math.max(0,Math.min(300,Math.round(sim.dmiSpeed)));
  return sim.dispKmh;
 }
 
