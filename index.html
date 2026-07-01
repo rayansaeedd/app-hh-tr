@@ -1741,7 +1741,8 @@ function wireSimulator(){
  var throttle=document.getElementById("throttleSlider");
  if(throttle)throttle.oninput=function(e){
    sim.throttle=Number(e.target.value)/100;
-   var lbl=document.getElementById("runBtnB");
+   sim.dmiSpeed=Math.round(sim.throttle*300/5)*5;
+   renderSimulator();
  };
 
  var toggleSettings=document.getElementById("toggleSettingsBtn");
@@ -1881,7 +1882,7 @@ function startSimLoop(){
    var dt=Math.min((t-sim.lastT)/1000,0.05);
    sim.lastT=t;
    var MAX=MAX_SPEED,A=ACCEL,D=DECEL;
-   var targetThrottle=sim.dmiSpeedManual?(sim.dmiSpeed/300):sim.throttle;
+   var targetThrottle=sim.dmiSpeed/300;
    var b1=sim.running1?targetThrottle*MAX:0;
    sim.v1=sim.v1<b1?Math.min(b1,sim.v1+A*dt):Math.max(b1,sim.v1-D*dt);
    sim.t1x-=sim.v1*dt;
