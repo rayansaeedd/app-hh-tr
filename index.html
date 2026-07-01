@@ -119,8 +119,8 @@
   .sim-resetbtn{padding:10px 12px;border-radius:9px;border:1px solid #2a323d;background:#0f1318;color:#c4ccd5;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;}
   .sim-qta{flex:1;min-height:64px;background:#0f1318;border:1.5px solid #2a323d;border-radius:7px;color:#e6ebf2;font-size:13px;font-family:'Barlow',sans-serif;padding:8px 10px;resize:vertical;outline:none;}
   .sim-clearbtn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:#0f1318;border:1.5px solid #2a323d;color:#8b97a6;}
-  .mini-dmi-dock{width:380px;height:210px;z-index:30;display:flex;align-items:center;gap:8px;}
-  .mini-dmi{position:relative;width:320px;height:210px;background:#0a1a31;border:1.5px solid #20344e;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.55);z-index:30;touch-action:none;flex-shrink:0;}
+  .mini-dmi-dock{width:540px;height:280px;z-index:30;display:flex;align-items:center;gap:10px;}
+  .mini-dmi{position:relative;width:480px;height:280px;background:#0a1a31;border:1.5px solid #20344e;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.55);z-index:30;touch-action:none;flex-shrink:0;}
   .mini-dmi-hd{position:absolute;top:0;left:0;right:0;background:#0d2040;border-bottom:1px solid #1a3050;padding:2px 7px;display:flex;align-items:center;justify-content:space-between;z-index:2;}
   .mini-arrowpad{position:relative;z-index:31;flex-shrink:0;}
   .mini-arrowpad button{background:#0d2040;border:1px solid #20344e;border-radius:4px;color:#6fb0e6;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
@@ -1053,7 +1053,7 @@ function siding4Markup(){
 /* ---------- Mini DMI overlay ---------- */
 function miniDmiMarkup(){
  var docked=sim.miniDmiX===null;
- var dockStyle=docked?"position:relative;margin:8px 0 0 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
+ var dockStyle=docked?"position:relative;margin:10px auto 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
  var arrowPad='<div class="mini-arrowpad" id="miniArrows" style="display:flex;align-items:center;justify-content:center;">'+
    '<div class="sim-arrowgrid">'+
      '<div></div><button id="miniUp">&#9650;</button><div></div>'+
@@ -1062,8 +1062,8 @@ function miniDmiMarkup(){
    '</div>'+
  '</div>';
  return '<div class="mini-dmi-dock" id="miniDmiDock" style="'+dockStyle+'display:flex;align-items:center;gap:8px;">'+
-   '<div class="mini-dmi" id="miniDmi" style="position:relative;left:auto;top:auto;width:320px;height:210px;flex-shrink:0;">'+
-     '<svg viewBox="0 0 640 480" width="320" height="210" style="display:block;" font-family="Barlow,sans-serif">'+
+   '<div class="mini-dmi" id="miniDmi" style="position:relative;left:auto;top:auto;width:480px;height:280px;flex-shrink:0;">'+
+     '<svg viewBox="0 0 640 480" width="480" height="280" style="display:block;" font-family="Barlow,sans-serif">'+
        dmiSpeedoSvgInner()+
        dmiFullExtrasSvg()+
      '</svg>'+
