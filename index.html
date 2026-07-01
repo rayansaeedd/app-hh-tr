@@ -650,7 +650,7 @@ var sim={
  t1x:2250, v1:0, running1:false,
  t2x:-320, v2:0, running2:false,
  displayV:0, dispKmh:0, odometer:0,
- throttle:0.55,
+ throttle:10/300,
  aspects:{E1:"redblue",E2:"redblue",E3:"redblue",E4:"redblue"},
  layout:"crossover3",
  aspects4:{E4:"redblue",E1:"redblue",E2:"redblue",E3:"redblue",X11:"redblue",X21:"redblue",X12:"redblue",X22:"redblue",X14:"redblue",X24:"redblue",S2:"redblue",S3:"redblue"},
@@ -1561,7 +1561,7 @@ function settingsPanelsMarkup(){
    settingsBody=
      '<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;color:#c4ccd5;">Speed</span>'+
        '<input type="range" min="0" max="300" step="5" value="'+sim.dmiSpeed+'" id="dmiSpeedSlider" class="sim-range" style="accent-color:#6fb0e6;flex:1;">'+
-       '<span style="font-size:15px;font-weight:800;color:#e6ebf2;min-width:62px;text-align:right;font-family:\'Barlow Semi Condensed\';">'+sim.dmiSpeed+' km/h</span></div>'+
+       '<span id="dmiSpeedLbl" style="font-size:15px;font-weight:800;color:#e6ebf2;min-width:62px;text-align:right;font-family:\'Barlow Semi Condensed\';">'+sim.dmiSpeed+' km/h</span></div>'+
      '<div style="display:flex;flex-direction:column;gap:6px;">'+
        '<div style="display:flex;justify-content:space-between;align-items:center;">'+
          '<div class="sim-sec-lbl">BRAKING CURVE (permitted speed)</div>'+
@@ -1640,6 +1640,7 @@ function settingsPanelsMarkup(){
    '<div style="display:flex;gap:8px;align-items:center;">'+
      '<button class="sim-runbtn '+(curRunning()?'stop':'go')+'" id="runBtnB">'+(curRunning()?"STOP":"DRIVE")+'</button>'+
      '<input type="range" min="0" max="100" value="'+Math.round(sim.throttle*100)+'" id="throttleSlider" class="sim-range" style="accent-color:#3ea537;">'+
+     '<span id="throttleSpeedLbl" style="font-size:13px;font-weight:700;color:#3ea537;min-width:52px;">'+sim.dmiSpeed+' km/h</span>'+
      '<button class="sim-resetbtn" id="resetBtn">Reset</button>'+
    '</div>'+
    '<div style="font-size:11px;color:#7c8794;line-height:1.4;">Practical &mdash; read aspects and drive as on the line.</div>'+
@@ -1741,7 +1742,10 @@ function wireSimulator(){
  if(throttle)throttle.oninput=function(e){
    sim.throttle=Number(e.target.value)/100;
    sim.dmiSpeed=Math.round(sim.throttle*300/5)*5;
-   renderSimulator();
+   var lbl=document.getElementById("throttleSpeedLbl");
+   if(lbl)lbl.textContent=sim.dmiSpeed+" km/h";
+   var dlbl=document.getElementById("dmiSpeedLbl");
+   if(dlbl)dlbl.textContent=sim.dmiSpeed+" km/h";
  };
 
  var toggleSettings=document.getElementById("toggleSettingsBtn");
@@ -1749,8 +1753,15 @@ function wireSimulator(){
 
  var dmiSpeedSlider=document.getElementById("dmiSpeedSlider");
  if(dmiSpeedSlider)dmiSpeedSlider.oninput=function(e){
-   sim.dmiSpeed=Math.round(Number(e.target.value)/5)*5;sim.dmiSpeedManual=true;
-   sim.throttle=sim.dmiSpeed/300;renderSimulator();
+   sim.dmiSpeed=Math.round(Number(e.target.value)/5)*5;
+   sim.dmiSpeedManual=true;
+   sim.throttle=sim.dmiSpeed/300;
+   var lbl=document.getElementById("dmiSpeedLbl");
+   if(lbl)lbl.textContent=sim.dmiSpeed+" km/h";
+   var tlbl=document.getElementById("throttleSpeedLbl");
+   if(tlbl)tlbl.textContent=sim.dmiSpeed+" km/h";
+   var ts=document.getElementById("throttleSlider");
+   if(ts)ts.value=Math.round(sim.throttle*100);
  };
  var dmiPermSlider=document.getElementById("dmiPermSlider");
  if(dmiPermSlider)dmiPermSlider.onchange=function(e){
