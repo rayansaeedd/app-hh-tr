@@ -1235,6 +1235,7 @@ function wireScenarioEdit(){
      var c=s.steps[si].choices[ci];
      if(f==="stopTrain")c.stopTrain=this.checked;
      else if(f==="hornSound")c.hornSound=this.checked;
+     else if(f==="isCorrect")c.isCorrect=this.checked;
      else c[f]=this.value;
    };
    if(el.type==="checkbox")el.onchange=handler; else el.oninput=handler;
@@ -1242,7 +1243,7 @@ function wireScenarioEdit(){
  app.querySelectorAll("[data-addchoice]").forEach(function(b){
    b.onclick=function(){
      var si=Number(this.getAttribute("data-addchoice"));
-     s.steps[si].choices.push({label:"New choice",aspectSig:"",aspectVal:"red",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""});
+     s.steps[si].choices.push({label:"New choice",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,isCorrect:false,trafficReply:"",correctiveAction:"",docRef:"",goto:""});
      render();
    };
  });
@@ -1258,8 +1259,8 @@ function wireScenarioEdit(){
  });
  document.getElementById("addStepBtn").onclick=function(){
    s.steps.push({distance:150,arriveAspectSig:"",arriveAspectVal:"",arriveMode:"",question:"",choices:[
-     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""},
-     {label:"No",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""}
+     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,isCorrect:true,trafficReply:"",correctiveAction:"",docRef:"",goto:""},
+     {label:"No",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,isCorrect:false,trafficReply:"",correctiveAction:"",docRef:"",goto:""}
    ]});render();
  };
  document.getElementById("saveScenBtn").onclick=function(){
