@@ -1749,7 +1749,8 @@ function wireSimulator(){
 
  var dmiSpeedSlider=document.getElementById("dmiSpeedSlider");
  if(dmiSpeedSlider)dmiSpeedSlider.oninput=function(e){
-   sim.dmiSpeed=Math.round(Number(e.target.value)/5)*5;sim.dmiSpeedManual=true;renderSimulator();
+   sim.dmiSpeed=Math.round(Number(e.target.value)/5)*5;sim.dmiSpeedManual=true;
+   sim.throttle=sim.dmiSpeed/300;renderSimulator();
  };
  var dmiPermSlider=document.getElementById("dmiPermSlider");
  if(dmiPermSlider)dmiPermSlider.onchange=function(e){
@@ -1880,11 +1881,12 @@ function startSimLoop(){
    var dt=Math.min((t-sim.lastT)/1000,0.05);
    sim.lastT=t;
    var MAX=MAX_SPEED,A=ACCEL,D=DECEL;
-   var b1=sim.running1?sim.throttle*MAX:0;
+   var targetThrottle=sim.dmiSpeedManual?(sim.dmiSpeed/300):sim.throttle;
+   var b1=sim.running1?targetThrottle*MAX:0;
    sim.v1=sim.v1<b1?Math.min(b1,sim.v1+A*dt):Math.max(b1,sim.v1-D*dt);
    sim.t1x-=sim.v1*dt;
    if(sim.t1x<-320)sim.t1x=(sim.layout==="siding4"?4600:3600);
-   var b2=sim.running2?sim.throttle*MAX:0;
+   var b2=sim.running2?targetThrottle*MAX:0;
    sim.v2=sim.v2<b2?Math.min(b2,sim.v2+A*dt):Math.max(b2,sim.v2-D*dt);
    sim.t2x+=sim.v2*dt;
    if(sim.t2x>(sim.layout==="siding4"?4600:3600))sim.t2x=-320;
