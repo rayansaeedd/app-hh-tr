@@ -1053,7 +1053,7 @@ function siding4Markup(){
 /* ---------- Mini DMI overlay ---------- */
 function miniDmiMarkup(){
  var docked=sim.miniDmiX===null;
- var dockStyle=docked?"position:relative;margin:10px auto 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
+ var dockStyle=docked?"position:relative;margin:8px 0 0 0;":("position:absolute;left:"+Math.round(sim.miniDmiX)+"px;top:"+Math.round(sim.miniDmiY)+"px;");
  var arrowPad='<div class="mini-arrowpad" id="miniArrows" style="display:flex;align-items:center;justify-content:center;">'+
    '<div class="sim-arrowgrid">'+
      '<div></div><button id="miniUp">&#9650;</button><div></div>'+
@@ -1283,6 +1283,7 @@ function launchScenario(scenario,driverId){
  var pos=SCEN_SIGNAL_POS[scenario.layout][scenario.startSignal];
  sim.layout=scenario.layout;
  sim.view="track";
+ sim.miniDmiX=null;sim.miniDmiY=null;
  sim.t1x=2250;sim.v1=0;sim.running1=false;
  sim.t2x=-320;sim.v2=0;sim.running2=false;
  sim.displayV=0;sim.dispKmh=0;sim.odometer=0;
@@ -1461,13 +1462,13 @@ function trackLayoutMarkup(){
    '<div class="sim-stage" style="height:'+stageH+'px;">'+
      (isC?crossover3Markup():siding4Markup())+
    '</div>'+
-   miniDmiMarkup()+
    '<div class="sim-drivebar">'+
      '<button class="sim-trainbtn'+(sim.activeTrain===1?' on':'')+'" id="trainBtn1" style="border-color:#2f6fd6;">Track 1 &middot; T1</button>'+
      '<button class="sim-trainbtn'+(sim.activeTrain===2?' on':'')+'" id="trainBtn2" style="border-color:#c07820;">Track 2 &middot; T2</button>'+
      '<button class="sim-runbtn" id="overrideEoaBtn" style="background:#7a3fc9;">Override EOA</button>'+
      '<button class="sim-runbtn '+(curRunning()?'stop':'go')+'" id="runBtn">'+(curRunning()?"STOP":"DRIVE")+'</button>'+
    '</div>'+
+   miniDmiMarkup()+
  '</div>';
  return h;
 }
@@ -1691,7 +1692,7 @@ function wireSimulator(){
    view="home";
    window.scrollTo(0,0);render();
  };
- var vt=document.getElementById("viewTrack"); if(vt)vt.onclick=function(){sim.view="track";renderSimulator();};
+ var vt=document.getElementById("viewTrack"); if(vt)vt.onclick=function(){sim.view="track";sim.miniDmiX=null;sim.miniDmiY=null;renderSimulator();};
  var vd=document.getElementById("viewDmi"); if(vd)vd.onclick=function(){sim.view="dmi";renderSimulator();};
  var vs=document.getElementById("viewScenarios"); if(vs)vs.onclick=function(){sim.view="scenarios";scenView="list";renderSimulator();};
 
