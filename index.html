@@ -659,7 +659,7 @@ var sim={
  activeTrain:1,
  scale:1, scaleS:1, dmiScale:1,
  view:"track",
- dmiSpeed:133, dmiSpeedManual:false,
+ dmiSpeed:10, dmiSpeedManual:false,
  dmiLevel:2, dmiMode:"fs", dmiRbc:"connected",
  settingsOpen:true,
  dmiPermManual:null,
@@ -1561,7 +1561,7 @@ function settingsPanelsMarkup(){
  if(sim.settingsOpen){
    settingsBody=
      '<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:12px;color:#c4ccd5;">Speed</span>'+
-       '<input type="range" min="0" max="300" value="'+sim.dmiSpeed+'" id="dmiSpeedSlider" class="sim-range" style="accent-color:#6fb0e6;flex:1;">'+
+       '<input type="range" min="0" max="300" step="5" value="'+sim.dmiSpeed+'" id="dmiSpeedSlider" class="sim-range" style="accent-color:#6fb0e6;flex:1;">'+
        '<span style="font-size:15px;font-weight:800;color:#e6ebf2;min-width:62px;text-align:right;font-family:\'Barlow Semi Condensed\';">'+sim.dmiSpeed+' km/h</span></div>'+
      '<div style="display:flex;flex-direction:column;gap:6px;">'+
        '<div style="display:flex;justify-content:space-between;align-items:center;">'+
@@ -1749,7 +1749,7 @@ function wireSimulator(){
 
  var dmiSpeedSlider=document.getElementById("dmiSpeedSlider");
  if(dmiSpeedSlider)dmiSpeedSlider.oninput=function(e){
-   sim.dmiSpeed=Number(e.target.value);sim.dmiSpeedManual=true;renderSimulator();
+   sim.dmiSpeed=Math.round(Number(e.target.value)/5)*5;sim.dmiSpeedManual=true;renderSimulator();
  };
  var dmiPermSlider=document.getElementById("dmiPermSlider");
  if(dmiPermSlider)dmiPermSlider.onchange=function(e){
