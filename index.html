@@ -392,7 +392,7 @@ var CATEGORIES=[
        steps:[
          { id:1, title:"TCMS Key Switch",
            instruction:"Turn the TCMS key switch to the OFF position (rotate the key counter-clockwise to the left).",
-           anim:{ type:"keyswitch", startAngle:45, targetAngle:225, onLabel:"ON", offLabel:"OFF", startPos:"on", targetPos:"off" }
+           anim:{ type:"keyswitch", startAngle:120, targetAngle:-30, onLabel:"ON", offLabel:"OFF", startPos:"on", targetPos:"off" }
          }
        ]
      }
@@ -470,32 +470,127 @@ function htdList(){
  });
 }
 
+function htdScrewSvg(x,y){
+ return '<g>'+
+   '<circle cx="'+x+'" cy="'+y+'" r="6" fill="#9aa2aa" stroke="#6a7278" stroke-width="0.8"/>'+
+   '<circle cx="'+x+'" cy="'+y+'" r="5" fill="url(#screwGrad)"/>'+
+   '<line x1="'+(x-3.2)+'" y1="'+y+'" x2="'+(x+3.2)+'" y2="'+y+'" stroke="#404850" stroke-width="1.4" stroke-linecap="round"/>'+
+   '<line x1="'+x+'" y1="'+(y-3.2)+'" x2="'+x+'" y2="'+(y+3.2)+'" stroke="#404850" stroke-width="1.4" stroke-linecap="round"/>'+
+   '<ellipse cx="'+(x-1.5)+'" cy="'+(y-1.5)+'" rx="2.5" ry="1.5" fill="#fff" opacity="0.25"/>'+
+ '</g>';
+}
 function htdKeySwitchSvg(anim, angle, done){
- var cx=130,cy=130,r=44;
- var rad=(angle-90)*Math.PI/180;
- var kx=cx+Math.cos(rad)*28, ky=cy+Math.sin(rad)*28;
- var onRad=(anim.startAngle-90)*Math.PI/180;
- var offRad=(anim.targetAngle-90)*Math.PI/180;
- var onLx=cx+Math.cos(onRad)*72, onLy=cy+Math.sin(onRad)*72;
- var offLx=cx+Math.cos(offRad)*72, offLy=cy+Math.sin(offRad)*72;
- var panelColor=done?"#c8d8c8":"#b0b8c0";
- var glowColor=done?"#22c55e":"none";
- var svg='<svg viewBox="0 0 260 260" width="220" height="220" style="cursor:pointer;-webkit-tap-highlight-color:transparent;" id="htdKeySwitch">'+
-   '<rect x="40" y="40" width="180" height="180" rx="8" fill="'+panelColor+'" stroke="#8a9099" stroke-width="2"/>'+
-   '<circle cx="70" cy="70" r="5" fill="#7a8088"/><circle cx="190" cy="70" r="5" fill="#7a8088"/>'+
-   '<circle cx="70" cy="190" r="5" fill="#7a8088"/><circle cx="190" cy="190" r="5" fill="#7a8088"/>'+
-   (done?'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r+6)+'" fill="none" stroke="#22c55e" stroke-width="3" opacity="0.5"/>':'')+
-   '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#1a1e24" stroke="#555" stroke-width="2.5"/>'+
-   '<circle cx="'+cx+'" cy="'+cy+'" r="10" fill="#2a2e34" stroke="#666" stroke-width="1.5"/>'+
-   '<text x="'+onLx+'" y="'+onLy+'" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="'+(anim.startPos==="on"?"#22c55e":"#888")+'" font-family="sans-serif">'+esc(anim.onLabel)+'</text>'+
-   '<text x="'+offLx+'" y="'+offLy+'" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="'+(done?"#22c55e":"#ef4444")+'" font-family="sans-serif">'+esc(anim.offLabel)+'</text>'+
-   '<g id="htdKey" transform="rotate('+angle+','+cx+','+cy+')">'+
-     '<ellipse cx="'+cx+'" cy="'+(cy-32)+'" rx="11" ry="11" fill="#d4a520" stroke="#b8860b" stroke-width="1.5"/>'+
-     '<ellipse cx="'+cx+'" cy="'+(cy-32)+'" rx="5" ry="5" fill="#1a1e24"/>'+
-     '<rect x="'+(cx-2.5)+'" y="'+(cy-21)+'" width="5" height="28" rx="2" fill="#d4a520" stroke="#b8860b" stroke-width="1"/>'+
-     '<rect x="'+(cx+2.5)+'" y="'+(cy-10)+'" width="6" height="3" rx="1" fill="#d4a520"/>'+
-     '<rect x="'+(cx+2.5)+'" y="'+(cy-4)+'" width="4" height="3" rx="1" fill="#d4a520"/>'+
-   '</g>'+
+ var cx=150,cy=152;
+ var svg='<svg viewBox="0 0 300 300" width="270" height="270" style="cursor:pointer;-webkit-tap-highlight-color:transparent;display:block;margin:auto;" id="htdKeySwitch">'+
+  '<defs>'+
+   '<linearGradient id="panelBg" x1="0" y1="0" x2="0" y2="1">'+
+    '<stop offset="0%" stop-color="#484c52"/><stop offset="100%" stop-color="#36393e"/>'+
+   '</linearGradient>'+
+   '<linearGradient id="brushedH" x1="0" y1="0" x2="1" y2="0">'+
+    '<stop offset="0%" stop-color="#8a9098"/><stop offset="12%" stop-color="#b8bec5"/>'+
+    '<stop offset="28%" stop-color="#d0d6dc"/><stop offset="45%" stop-color="#c2c8ce"/>'+
+    '<stop offset="60%" stop-color="#d8dde2"/><stop offset="78%" stop-color="#bec4ca"/>'+
+    '<stop offset="100%" stop-color="#8e969e"/>'+
+   '</linearGradient>'+
+   '<radialGradient id="lockBodyGrad" cx="38%" cy="32%">'+
+    '<stop offset="0%" stop-color="#525660"/><stop offset="50%" stop-color="#282c34"/>'+
+    '<stop offset="100%" stop-color="#1a1c22"/>'+
+   '</radialGradient>'+
+   '<radialGradient id="lockRingGrad" cx="30%" cy="25%">'+
+    '<stop offset="0%" stop-color="#888e96"/><stop offset="100%" stop-color="#505660"/>'+
+   '</radialGradient>'+
+   '<radialGradient id="bowGrad" cx="30%" cy="25%">'+
+    '<stop offset="0%" stop-color="#eed050"/><stop offset="40%" stop-color="#c8a828"/>'+
+    '<stop offset="100%" stop-color="#8a6c08"/>'+
+   '</radialGradient>'+
+   '<linearGradient id="bladeGrad" x1="0" y1="0" x2="1" y2="0">'+
+    '<stop offset="0%" stop-color="#9a7c12"/><stop offset="25%" stop-color="#d4aa2e"/>'+
+    '<stop offset="55%" stop-color="#c09a20"/><stop offset="100%" stop-color="#8a6e0c"/>'+
+   '</linearGradient>'+
+   '<radialGradient id="screwGrad" cx="35%" cy="30%">'+
+    '<stop offset="0%" stop-color="#c0c8d0"/><stop offset="100%" stop-color="#7a8290"/>'+
+   '</radialGradient>'+
+   '<filter id="plateShadow" x="-8%" y="-8%" width="116%" height="116%">'+
+    '<feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.55"/>'+
+   '</filter>'+
+   '<filter id="lockShadow" x="-15%" y="-15%" width="130%" height="130%">'+
+    '<feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.7"/>'+
+   '</filter>'+
+  '</defs>'+
+
+  // Dark charcoal panel background
+  '<rect width="300" height="300" fill="url(#panelBg)" rx="14"/>'+
+  // Subtle panel sheen
+  '<rect width="300" height="150" fill="#fff" opacity="0.02" rx="14"/>'+
+
+  // Brushed metal plate
+  '<rect x="70" y="70" width="160" height="160" rx="7" fill="url(#brushedH)" filter="url(#plateShadow)"/>'+
+  // plate edge highlight top
+  '<rect x="70" y="70" width="160" height="2" rx="2" fill="#fff" opacity="0.35"/>'+
+  // plate edge shadow bottom
+  '<rect x="70" y="228" width="160" height="2" rx="2" fill="#000" opacity="0.2"/>'+
+  // plate border
+  '<rect x="70" y="70" width="160" height="160" rx="7" fill="none" stroke="#5a6068" stroke-width="1"/>'+
+
+  // Screws at four corners
+  htdScrewSvg(85,85)+htdScrewSvg(215,85)+htdScrewSvg(85,215)+htdScrewSvg(215,215)+
+
+  // OFF label — upper-left of lock
+  '<text x="103" y="105" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1a1c22" font-family="Arial,sans-serif" letter-spacing="0.8">OFF</text>'+
+  '<text x="103" y="117" text-anchor="middle" font-size="9.5" fill="#2a2c32" font-family="Arial,sans-serif">اطف</text>'+
+
+  // ON label — lower-right of lock
+  '<text x="198" y="192" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1a1c22" font-family="Arial,sans-serif" letter-spacing="0.8">ON</text>'+
+  '<text x="198" y="204" text-anchor="middle" font-size="9.5" fill="#2a2c32" font-family="Arial,sans-serif">تشغيل</text>'+
+
+  // Done green glow
+  (done?'<circle cx="'+cx+'" cy="'+cy+'" r="42" fill="none" stroke="#22c55e" stroke-width="3.5" opacity="0.7"/>':'') +
+
+  // Lock cylinder — layered for depth
+  '<circle cx="'+cx+'" cy="'+cy+'" r="36" fill="url(#lockRingGrad)" filter="url(#lockShadow)"/>'+
+  '<circle cx="'+cx+'" cy="'+cy+'" r="33" fill="url(#lockBodyGrad)"/>'+
+  '<circle cx="'+cx+'" cy="'+cy+'" r="36" fill="none" stroke="#666c74" stroke-width="1.2"/>'+
+  '<circle cx="'+cx+'" cy="'+cy+'" r="29" fill="none" stroke="#333840" stroke-width="0.6"/>'+
+  // Cylinder highlight glint
+  '<ellipse cx="'+(cx-10)+'" cy="'+(cy-12)+'" rx="9" ry="5" fill="#fff" opacity="0.07"/>'+
+
+  // KEY GROUP — rotates around lock center
+  '<g id="htdKey" transform="rotate('+angle+','+cx+','+cy+')">'+
+   // Shank connector (from ring down into lock)
+   '<rect x="'+(cx-4)+'" y="'+(cy-52)+'" width="8" height="22" fill="#b89418" stroke="#8a6e0e" stroke-width="0.6"/>'+
+
+   // Key blade
+   '<rect x="'+(cx-4.5)+'" y="'+(cy-32)+'" width="9" height="26" rx="1.2" fill="url(#bladeGrad)" stroke="#8a6e0e" stroke-width="0.7"/>'+
+   // blade center groove
+   '<line x1="'+cx+'" y1="'+(cy-30)+'" x2="'+cx+'" y2="'+(cy-8)+'" stroke="#9a7a14" stroke-width="1"/>'+
+   // Blade cuts — right side (3 teeth)
+   '<rect x="'+(cx+4.5)+'" y="'+(cy-28)+'" width="5.5" height="4" rx="0.8" fill="#c8a020" stroke="#9a7a10" stroke-width="0.5"/>'+
+   '<rect x="'+(cx+4.5)+'" y="'+(cy-20)+'" width="4" height="4" rx="0.8" fill="#c8a020" stroke="#9a7a10" stroke-width="0.5"/>'+
+   '<rect x="'+(cx+4.5)+'" y="'+(cy-12)+'" width="5.5" height="4" rx="0.8" fill="#c8a020" stroke="#9a7a10" stroke-width="0.5"/>'+
+   // Blade tip
+   '<path d="M'+(cx-3)+','+(cy-6)+' L'+(cx-3)+','+(cy-2)+' Q'+cx+','+(cy+3)+' '+(cx+3)+','+(cy-2)+' L'+(cx+3)+','+(cy-6)+' Z" fill="#9a7818" stroke="#7a6010" stroke-width="0.5"/>'+
+
+   // Shank shoulder
+   '<rect x="'+(cx-5.5)+'" y="'+(cy-55)+'" width="11" height="5" rx="1" fill="#a88c18" stroke="#7a6a10" stroke-width="0.5"/>'+
+
+   // Key bow/ring — centered above shank
+   // Outer ring
+   '<circle cx="'+cx+'" cy="'+(cy-74)+'" r="24" fill="url(#bowGrad)" stroke="#7a6210" stroke-width="1.4"/>'+
+   // Inner hole (shows panel background through)
+   '<circle cx="'+cx+'" cy="'+(cy-74)+'" r="13" fill="#3c3f44"/>'+
+   // Hole edge detail
+   '<circle cx="'+cx+'" cy="'+(cy-74)+'" r="13" fill="none" stroke="#6a5010" stroke-width="1"/>'+
+   // Inner ring detail (worn engraving look)
+   '<circle cx="'+cx+'" cy="'+(cy-74)+'" r="9.5" fill="none" stroke="#a08820" stroke-width="0.7" stroke-dasharray="3,2"/>'+
+   // Key number text (worn stamp)
+   '<text x="'+cx+'" y="'+(cy-71)+'" text-anchor="middle" font-size="5.5" fill="#9a7818" font-family="Arial,sans-serif" font-weight="700" opacity="0.7">4065544A</text>'+
+   '<text x="'+cx+'" y="'+(cy-65)+'" text-anchor="middle" font-size="5" fill="#9a7818" font-family="Arial,sans-serif" opacity="0.7">N2</text>'+
+   // Ring highlight glint
+   '<ellipse cx="'+(cx-8)+'" cy="'+(cy-84)+'" rx="8" ry="4.5" fill="#fff" opacity="0.18"/>'+
+  '</g>'+
+
+  // Tap hint pulse ring
+  (!done?'<circle cx="'+cx+'" cy="'+cy+'" r="40" fill="none" stroke="#6fb0e6" stroke-width="1.5" opacity="0.35" stroke-dasharray="5,4"/>':'')+
  '</svg>';
  return svg;
 }
@@ -568,7 +663,7 @@ function htdPlayer(){
        var a=start+diff*ease;
        htd.keyAngle=a;
        var kg=document.getElementById("htdKey");
-       if(kg){kg.setAttribute("transform","rotate("+a+","+130+","+130+")");}
+       if(kg){kg.setAttribute("transform","rotate("+a+","+150+","+152+")");}
        if(prog<1){requestAnimationFrame(animFrame);}
        else{htd.keyAngle=target;htd.animDone=true;animating=false;htdPlayer();}
      }
