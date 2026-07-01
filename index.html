@@ -1913,7 +1913,7 @@ function startSimLoop(){
 
    var kmhChanged=(newKmh!==sim.dispKmh);
    sim.dispKmh=newKmh;
-   if(kmhChanged && !sim.dmiSpeedManual){
+   if(kmhChanged){
      updateDmiNeedleDom();
    }
    updateOdoDom();
