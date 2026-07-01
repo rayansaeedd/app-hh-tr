@@ -358,9 +358,10 @@ var CATEGORIES=[
        ] }
    ] },
  { key:"procedures", name:"Procedures", color:"#06b6d4", desc:"Standard operating procedures", items:[], comingSoon:true },
- { key:"emergency", name:"Emergency", color:"#ef4444", desc:"Emergency actions", items:[], comingSoon:true },
+ { key:"havetodoit", name:"Have to do it", color:"#ef4444", desc:"Actions the driver must perform", items:[] },
  { key:"simulator", name:"Simulator", color:"#0ea5e9", desc:"Practice the ETCS cab DMI", isSimulator:true }
 ];
+CATEGORIES.find(function(c){return c.key==="havetodoit";}).items=CATEGORIES[0].items;
 
 var view="home", curCat=null, curItem=null, query="";
 var SCEN_KEY="etcsScenarios_v1";
