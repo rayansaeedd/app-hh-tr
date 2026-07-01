@@ -393,6 +393,9 @@ function normalizeScenario(s){
    step.choices=(step.choices||[]).map(function(c){
      if(typeof c==="string")c={label:c,aspectSig:"",aspectVal:"",mode:"",stopTrain:false,trafficReply:"",goto:""};
      if(c.hornSound===undefined)c.hornSound=false;
+     if(c.isCorrect===undefined)c.isCorrect=false;
+     if(c.correctiveAction===undefined)c.correctiveAction="";
+     if(c.docRef===undefined)c.docRef="";
      return c;
    });
  });
@@ -1074,9 +1077,9 @@ function miniDmiMarkup(){
 function newScenario(){
  return {id:"s"+Date.now(),name:"New Scenario",layout:"crossover3",startSignal:"E1",startMode:"fs",
    steps:[{distance:150,arriveAspectSig:"",arriveAspectVal:"",arriveMode:"",question:"Can you pass this signal?",choices:[
-     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"",goto:""},
-     {label:"No",aspectSig:"E1",aspectVal:"red",mode:"",stopTrain:true,hornSound:false,trafficReply:"",goto:""},
-     {label:"Call Traffic",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,trafficReply:"Proceed with caution, SP.",goto:""}
+     {label:"Yes",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,isCorrect:true,trafficReply:"",correctiveAction:"",docRef:"",goto:""},
+     {label:"No",aspectSig:"E1",aspectVal:"red",mode:"",stopTrain:true,hornSound:false,isCorrect:false,trafficReply:"",correctiveAction:"Do not pass a red signal without authority.",docRef:"ETCS Manual §3.1",goto:""},
+     {label:"Call Traffic",aspectSig:"",aspectVal:"",mode:"",stopTrain:false,hornSound:false,isCorrect:false,trafficReply:"Proceed with caution, SP.",correctiveAction:"",docRef:"",goto:""}
    ]}]};
 }
 function choiceRowMarkup(s,si,c,ci){
@@ -1100,7 +1103,10 @@ function choiceRowMarkup(s,si,c,ci){
    '</select>';
  h+='<label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px;"><input type="checkbox" data-cfield="stopTrain" data-step="'+si+'" data-choice="'+ci+'"'+(c.stopTrain?" checked":"")+'> Force STOP the train</label>';
  h+='<label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px;"><input type="checkbox" data-cfield="hornSound" data-step="'+si+'" data-choice="'+ci+'"'+(c.hornSound?" checked":"")+'> Sound the horn</label>';
+ h+='<label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px;"><input type="checkbox" data-cfield="isCorrect" data-step="'+si+'" data-choice="'+ci+'"'+(c.isCorrect?" checked":"")+'> <span style="color:#16a34a;font-weight:600;">&#10003; Mark as correct answer</span></label>';
  h+='<textarea data-cfield="trafficReply" data-step="'+si+'" data-choice="'+ci+'" rows="2" placeholder="Traffic / signaller reply shown to trainee (optional)" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(c.trafficReply||"")+'</textarea>';
+ h+='<textarea data-cfield="correctiveAction" data-step="'+si+'" data-choice="'+ci+'" rows="2" placeholder="Corrective action (shown in results if this answer is wrong)" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'+esc(c.correctiveAction||"")+'</textarea>';
+ h+='<input data-cfield="docRef" data-step="'+si+'" data-choice="'+ci+'" value="'+esc(c.docRef||"")+'" placeholder="Document reference (e.g. ETCS Manual §4.2)" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">';
  h+='<select data-cfield="goto" data-step="'+si+'" data-choice="'+ci+'" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">'+
      '<option value=""'+(c.goto===""||c.goto==null?" selected":"")+'>Then continue to next step</option>'+
      '<option value="-1"'+(String(c.goto)==="-1"?" selected":"")+'>Then end scenario</option>'+
@@ -1110,7 +1116,9 @@ function choiceRowMarkup(s,si,c,ci){
  return h;
 }
 function scenarioPanelMarkup(){
- return scenView==="edit"?scenarioEditMarkup():scenarioListMarkup();
+ if(scenView==="edit")return scenarioEditMarkup();
+ if(scenView==="driverid")return driverIdMarkup();
+ return scenarioListMarkup();
 }
 function scenarioListMarkup(){
  var h='<div style="padding:16px;"><p style="color:#64748b;margin-top:0;">Build and run branching training drills.</p>'+
@@ -1138,6 +1146,18 @@ function wireScenarioList(){
  app.querySelectorAll("[data-del]").forEach(function(b){b.onclick=function(){
    if(confirm("Delete this scenario?")){scenList.splice(Number(this.getAttribute("data-del")),1);saveScenarioList();render();}
  };});
+}
+function wireDriverId(){
+ var back=document.getElementById("scenBackBtn");
+ if(back)back.onclick=function(){scenPending=null;scenView="list";render();};
+ var inp=document.getElementById("driverIdInput");
+ var startBtn=document.getElementById("scenStartBtn");
+ if(startBtn)startBtn.onclick=function(){
+   var id=(inp?inp.value.trim():"");
+   if(!id){if(inp){inp.style.border="1.5px solid #e02020";inp.focus();}return;}
+   launchScenario(scenPending,id);
+ };
+ if(inp)inp.addEventListener("keydown",function(e){if(e.key==="Enter")startBtn&&startBtn.click();});
 }
 function scenarioEditMarkup(){
  var s=scenEditing;
@@ -1252,7 +1272,13 @@ function wireScenarioEdit(){
    scenView="list";scenEditing=null;render();
  };
 }
+var scenPending=null;
 function startScenario(scenario){
+ scenPending=scenario;
+ scenView="driverid";
+ render();
+}
+function launchScenario(scenario,driverId){
  var pos=SCEN_SIGNAL_POS[scenario.layout][scenario.startSignal];
  sim.layout=scenario.layout;
  sim.view="track";
@@ -1264,10 +1290,24 @@ function startScenario(scenario){
  if(scenario.layout==="crossover3")sim.activeSig=scenario.startSignal; else sim.activeSig4=scenario.startSignal;
  sim.dmiMode=scenario.startMode||"fs";
  if(sim.dmiMode==="un")sim.dmiLevel=0;
- scenRun={scenario:scenario,stepIndex:0,phase:"driving",distanceStart:0,answer:null};
+ scenRun={scenario:scenario,driverId:driverId,stepIndex:0,phase:"driving",distanceStart:0,answer:null,results:[]};
+ scenPending=null;
  view="simulator";
  window.scrollTo(0,0);
  render();
+}
+function driverIdMarkup(){
+ var s=scenPending;
+ return '<div style="padding:24px;max-width:420px;margin:0 auto;">'+
+   '<button id="scenBackBtn" style="background:none;border:none;color:#6fb0e6;font-size:14px;cursor:pointer;margin-bottom:16px;">&#8592; Back</button>'+
+   '<div style="background:#1e3a5f;border-radius:12px;padding:24px;">'+
+     '<div style="font-size:20px;font-weight:700;color:#e6ebf2;margin-bottom:6px;">'+esc(s.name)+'</div>'+
+     '<div style="color:#8ab4d4;font-size:14px;margin-bottom:24px;">'+(s.layout==="crossover3"?"Crossover 3":"Siding 4")+' &middot; '+s.steps.length+' step'+(s.steps.length===1?"":"s")+'</div>'+
+     '<label style="display:block;color:#cdd6e2;font-size:13px;font-weight:600;margin-bottom:8px;">DRIVER ID / TRAINEE NAME</label>'+
+     '<input id="driverIdInput" type="text" placeholder="e.g. DRV-1042 or John Smith" style="width:100%;padding:12px;font-size:16px;border:1.5px solid #2c5282;border-radius:8px;background:#0d2040;color:#e6ebf2;box-sizing:border-box;margin-bottom:20px;" autocomplete="off">'+
+     '<button id="scenStartBtn" class="sim-runbtn go" style="width:100%;font-size:16px;padding:14px;">Start Scenario</button>'+
+   '</div>'+
+ '</div>';
 }
 function applyChoiceEffects(layout,choice){
  if(!choice)return;
@@ -1289,20 +1329,94 @@ function applyArrivalEffects(layout,step){
    setDmiMode(step.arriveMode);
  }
 }
+function showScenarioResult(run){
+ var s=run.scenario, results=run.results, driverId=run.driverId||"Unknown";
+ var total=results.length;
+ var correct=results.filter(function(r){return r.isCorrect;}).length;
+ var pct=total>0?Math.round(correct/total*100):0;
+ var passed=pct>=70;
+ var dateStr=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+ var rowsHtml=results.map(function(r,i){
+   var bg=r.isCorrect?"#f0fdf4":"#fff7f7";
+   var icon=r.isCorrect?'<span style="color:#16a34a;font-size:18px;">&#10003;</span>':'<span style="color:#dc2626;font-size:18px;">&#10007;</span>';
+   var wrong=!r.isCorrect?
+     '<div style="margin-top:10px;padding:10px;background:#fff1f1;border-left:3px solid #dc2626;border-radius:4px;">'+
+       '<div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px;">CORRECT ANSWER</div>'+
+       '<div style="margin-bottom:8px;color:#1e293b;">'+esc(r.correctLabel)+'</div>'+
+       (r.correctiveAction?'<div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:4px;">RECOMMENDED ACTION</div><div style="margin-bottom:8px;color:#1e293b;">'+esc(r.correctiveAction)+'</div>':'')+
+       (r.docRef?'<div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:2px;">REFERENCE</div><div style="color:#0369a1;font-size:13px;">'+esc(r.docRef)+'</div>':'')+
+     '</div>':'';
+   return '<tr style="background:'+bg+';"><td style="padding:10px;border-bottom:1px solid #e2e8f0;width:28px;text-align:center;">'+icon+'</td>'+
+     '<td style="padding:10px;border-bottom:1px solid #e2e8f0;"><div style="font-weight:600;color:#1e293b;">Step '+(i+1)+': '+esc(r.question)+'</div>'+
+     '<div style="color:#64748b;font-size:13px;margin-top:4px;">Your answer: <b>'+esc(r.chosen)+'</b></div>'+wrong+'</td></tr>';
+ }).join("");
+ var html='<div id="scenResultOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:20px;">'+
+   '<div id="scenResultCard" style="background:#fff;border-radius:12px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden;">'+
+     '<div style="background:'+(passed?"#1d4e1d":"#4e1d1d")+';color:#fff;padding:24px 28px;">'+
+       '<div style="font-size:22px;font-weight:800;margin-bottom:4px;">'+(passed?"&#127942; PASSED":"&#10007; NOT PASSED")+'</div>'+
+       '<div style="font-size:14px;opacity:.85;">ERTMS/ETCS Scenario Training Result</div>'+
+     '</div>'+
+     '<div style="padding:24px 28px;border-bottom:1px solid #e2e8f0;display:flex;gap:28px;flex-wrap:wrap;">'+
+       '<div><div style="font-size:12px;color:#64748b;font-weight:700;">DRIVER / TRAINEE</div><div style="font-size:18px;font-weight:700;color:#1e293b;">'+esc(driverId)+'</div></div>'+
+       '<div><div style="font-size:12px;color:#64748b;font-weight:700;">SCENARIO</div><div style="font-size:16px;font-weight:600;color:#1e293b;">'+esc(s.name)+'</div></div>'+
+       '<div><div style="font-size:12px;color:#64748b;font-weight:700;">DATE</div><div style="font-size:16px;color:#1e293b;">'+dateStr+'</div></div>'+
+       '<div><div style="font-size:12px;color:#64748b;font-weight:700;">SCORE</div><div style="font-size:28px;font-weight:800;color:'+(passed?"#16a34a":"#dc2626")+';">'+pct+'%</div><div style="font-size:13px;color:#64748b;">'+correct+' / '+total+' correct</div></div>'+
+     '</div>'+
+     '<div style="padding:20px 28px;"><table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;">'+rowsHtml+'</table></div>'+
+     '<div style="padding:16px 28px;border-top:1px solid #e2e8f0;display:flex;gap:10px;flex-wrap:wrap;">'+
+       '<button id="scenResultPrint" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:12px 22px;font-size:15px;font-weight:700;cursor:pointer;">&#128438; Print / Save PDF</button>'+
+       '<button id="scenResultClose" style="background:#f1f5f9;color:#1e293b;border:none;border-radius:8px;padding:12px 22px;font-size:15px;cursor:pointer;">Close</button>'+
+     '</div>'+
+   '</div>'+
+ '</div>';
+ var el=document.createElement("div");
+ el.innerHTML=html;
+ document.body.appendChild(el.firstChild);
+ document.getElementById("scenResultClose").onclick=function(){
+   var ov=document.getElementById("scenResultOverlay");if(ov)ov.remove();
+   view="simulator";sim.view="scenarios";scenView="list";render();
+ };
+ document.getElementById("scenResultPrint").onclick=function(){
+   var card=document.getElementById("scenResultCard");
+   var w=window.open("","_blank","width=720,height=900");
+   w.document.write('<!DOCTYPE html><html><head><title>Result - '+esc(driverId)+'</title>'+
+     '<style>body{font-family:Arial,sans-serif;margin:0;padding:0;}table{width:100%;border-collapse:collapse;}@media print{button{display:none!important;}}</style>'+
+     '</head><body>'+card.outerHTML+'<script>window.onload=function(){window.print();}<\/script></body></html>');
+   w.document.close();
+ };
+}
+function recordStepResult(){
+ if(!scenRun)return;
+ var step=scenRun.scenario.steps[scenRun.stepIndex];
+ var ci=scenRun.answer;
+ var choice=ci!=null?step.choices[ci]:null;
+ var correctChoice=step.choices.filter(function(c){return c.isCorrect;})[0]||null;
+ scenRun.results.push({
+   stepIndex:scenRun.stepIndex,
+   question:step.question,
+   chosen:choice?choice.label:"(none)",
+   isCorrect:choice?!!choice.isCorrect:false,
+   correctLabel:correctChoice?correctChoice.label:"(not set)",
+   correctiveAction:choice?choice.correctiveAction:"",
+   docRef:choice?choice.docRef:""
+ });
+}
 function advanceScenario(){
  if(!scenRun)return;
  var step=scenRun.scenario.steps[scenRun.stepIndex];
  var choice=step.choices[scenRun.answer];
+ recordStepResult();
  var nextIdx=(choice&&choice.goto!==""&&choice.goto!=null)?Number(choice.goto):scenRun.stepIndex+1;
  if(nextIdx>=0&&nextIdx<scenRun.scenario.steps.length){
    scenRun.stepIndex=nextIdx;
    scenRun.phase="driving";
    scenRun.answer=null;
    scenRun.distanceStart=sim.odometer;
+   renderSimulator();
  } else {
+   showScenarioResult(scenRun);
    scenRun=null;
  }
- renderSimulator();
 }
 function scenarioRunBarMarkup(){
  if(!scenRun)return "";
@@ -1581,7 +1695,9 @@ function wireSimulator(){
  var vs=document.getElementById("viewScenarios"); if(vs)vs.onclick=function(){sim.view="scenarios";scenView="list";renderSimulator();};
 
  if(sim.view==="scenarios"){
-   if(scenView==="edit")wireScenarioEdit(); else wireScenarioList();
+   if(scenView==="edit")wireScenarioEdit();
+   else if(scenView==="driverid")wireDriverId();
+   else wireScenarioList();
  }
 
  var tc=document.getElementById("tabCrossover"); if(tc)tc.onclick=function(){sim.layout="crossover3";renderSimulator();};
